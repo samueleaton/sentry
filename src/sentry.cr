@@ -26,7 +26,7 @@ module Sentry
         app_process.kill unless app_process.terminated?
       end
 
-      puts "compiling app..."
+      puts "🤖  compiling app..."
       build_result = build_app_process()
       create_app_process() if build_result.success?
     end
@@ -40,9 +40,9 @@ module Sentry
         if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
           FILE_TIMESTAMPS[file] = timestamp
           file_changed = true
-          puts file
+          puts "🤖  #{file}"
         elsif FILE_TIMESTAMPS[file]?.nil?
-          puts "watching file: #{file}"
+          puts "🤖  watching file: #{file}"
           FILE_TIMESTAMPS[file] = timestamp
           file_changed = true if (app_process && !app_process.terminated?)
         end
