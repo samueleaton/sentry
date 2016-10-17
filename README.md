@@ -25,6 +25,16 @@ You can override the `build` and `run` commands by setting the `BUILD` and `RUN`
 BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app"
 ```
 
+## Why?
+
+Docker.
+
+It is tiring to have to stop and restart an app on every change. This becomes especially annoying when running the app in a docker container, where one would need to totally rebuild the docker image for every change.
+
+Now, for development, simply run sentry in your docker container, and it will rebuild the app from the docker container on any changes, without rebuilding the docker image/container.
+
+If you aren't using docker, no biggie, it still works.
+
 ## Contributing
 
 1. Fork it ( https://github.com/samueleaton/sentry/fork )
@@ -36,3 +46,7 @@ BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app"
 ## Contributors
 
 - [samueleaton](https://github.com/samueleaton) Sam Eaton - creator, maintainer
+
+## Disclaimer
+
+**Sentry is intended for use in a development environment, where failure is safe and expected ;)**
