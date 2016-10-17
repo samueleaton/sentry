@@ -30,5 +30,5 @@ FileUtils.mkdir_p "./dev"
 File.write "./dev/sentry.cr", sentry_code
 
 puts "🤖  sentry is vigilant. beep-boop..."
-puts "\nTo run, from you apps root directory do:
+puts "\nTo run, do (from you app's root directory):
   crystal ./dev/sentry.cr\n\n"
