@@ -1,6 +1,6 @@
 # Sentry 🤖  
 
-Starts your crystal application and watches files and restarts on file changes
+Build/Runs your crystal application, watches files, and rebuilds/reruns app on file changes
 
 ## Installation
 
