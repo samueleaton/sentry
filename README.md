@@ -1,4 +1,4 @@
-# sentry
+# Sentry 🤖  
 
 Starts your crystal application and watches files and restarts on file changes
 
@@ -9,7 +9,7 @@ To install in you project, from the root directory of your project, run:
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
 ```
 
-This install script is just a convenience. If it does not work, simply past the file located at `src/sentry.cr` in a your project at `dev/sentry.cr`.
+This install script is just a convenience. If it does not work, simply place the file located at `src/sentry.cr` into a your project at `dev/sentry.cr`.
 
 ## Usage
 
@@ -24,10 +24,6 @@ You can override the `build` and `run` commands by setting the `BUILD` and `RUN`
 ```bash
 BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app"
 ```
-
-## Development
-
-TODO: Write development instructions here
 
 ## Contributing
 
