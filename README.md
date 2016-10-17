@@ -13,7 +13,7 @@ This install script is just a convenience. If it does not work, simply place the
 
 ## Usage
 
-Assuming `sentry.cr` was correctly placed in `[your project name]/dev.sentry.cr`, to run it, simply run (from the root directory of your app):
+Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr`, simply run (from the root directory of your app):
 
 ```bash
 crystal dev/sentry.cr
