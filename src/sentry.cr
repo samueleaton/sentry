@@ -9,7 +9,7 @@ module Sentry
             build_process : (Nil | Process::Status) = nil
     
     private def build_app_process
-      @build_process = Process.run(BUILD_APP_COMMAND, shell: true, output: true, error: true)
+      @build_process = Process.run(BUILD_APP_COMMAND, output: true, error: true)
     end
 
     private def create_app_process

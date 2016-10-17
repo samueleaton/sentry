@@ -35,8 +35,6 @@ Now, for development, simply run sentry in your docker container, and it will re
 
 If you aren't using docker, no biggie, it still works.
 
-*I have filed and issue with the Crystal team about an inconsistency with incorrect child process numbers when running in docker...*
-
 ## Contributing
 
 1. Fork it ( https://github.com/samueleaton/sentry/fork )
