@@ -22,7 +22,7 @@ crystal dev/sentry.cr
 You can override the `build` and `run` commands by setting the `BUILD` and `RUN` environment variables, respectively:
 
 ```bash
-BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app"
+BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app" crystal dev/sentry.cr
 ```
 
 ## Why?
@@ -34,6 +34,8 @@ It is tiring to have to stop and restart an app on every change. This becomes es
 Now, for development, simply run sentry in your docker container, and it will rebuild the app from the docker container on any changes, without rebuilding the docker image/container.
 
 If you aren't using docker, no biggie, it still works.
+
+*I have filed and issue with the Crystal team about an inconsistency with incorrect child process numbers when running in docker...*
 
 ## Contributing
 
@@ -49,4 +51,4 @@ If you aren't using docker, no biggie, it still works.
 
 ## Disclaimer
 
-**Sentry is intended for use in a development environment, where failure is safe and expected ;)**
+Sentry is intended for use in a development environment, where failure is safe and expected 😉.
