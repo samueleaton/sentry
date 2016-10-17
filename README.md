@@ -1,28 +1,29 @@
 # sentry
 
-TODO: Write a description here
+Starts your crystal application and watches files and restarts on file changes
 
 ## Installation
 
-
-Add this to your application's `shard.yml`:
-
-```yaml
-dependencies:
-  sentry:
-    github: [your-github-name]/sentry
+To install in you project, from the root directory of your project, run:
+```bash
+curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
 ```
 
+This install script is just a convenience. If it does not work, simply past the file located at `src/sentry.cr` in a your project at `dev/sentry.cr`.
 
 ## Usage
 
+Assuming `sentry.cr` was correctly placed in `[your project name]/dev.sentry.cr`, to run it, simply run (from the root directory of your app):
 
-```crystal
-require "sentry"
+```bash
+crystal dev/sentry.cr
 ```
 
+You can override the `build` and `run` commands by setting the `BUILD` and `RUN` environment variables, respectively:
 
-TODO: Write usage instructions here
+```bash
+BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app"
+```
 
 ## Development
 
@@ -30,12 +31,12 @@ TODO: Write development instructions here
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/sentry/fork )
-2. Create your feature branch (git checkout -b my-new-feature)
+1. Fork it ( https://github.com/samueleaton/sentry/fork )
+2. Create your feature branch (git checkout -b feat/my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
+4. Push to the branch (git push origin feat/my-new-feature)
 5. Create a new Pull Request
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) Sam Eaton - creator, maintainer
+- [samueleaton](https://github.com/samueleaton) Sam Eaton - creator, maintainer
