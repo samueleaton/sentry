@@ -55,6 +55,8 @@ end
 
 process_runner = Sentry::ProcessRunner.new
 
+puts "🤖  sentry is vigilant. beep-boop..."
+
 loop do
   process_runner.scan_files
   sleep 1
