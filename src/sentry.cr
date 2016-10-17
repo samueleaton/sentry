@@ -1,7 +1,7 @@
 module Sentry
   FILES = ["./src/**/*.cr"]
-  BUILD_APP_COMMAND = "crystal build ./src/[app_name].cr"
-  RUN_APP_COMMAND = "./[app_name]"
+  BUILD_APP_COMMAND = ENV["BUILD"]? || "crystal build ./src/[app_name].cr"
+  RUN_APP_COMMAND = ENV["RUN"]? || "./[app_name]"
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
   class ProcessRunner
