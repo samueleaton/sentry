@@ -28,7 +28,7 @@ module Sentry
 
       puts "🤖  compiling app..."
       build_result = build_app_process()
-      create_app_process() if build_result.success?
+      create_app_process() if build_result && build_result.success?
     end
 
     def scan_files
@@ -48,7 +48,7 @@ module Sentry
         end
       end
 
-      start_app() if (file_changed || !app_process)
+      start_app() if (file_changed || app_process.nil?)
     end
   end
 end
