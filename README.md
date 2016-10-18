@@ -11,6 +11,10 @@ curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install
 
 This install script is just a convenience. If it does not work, simply place the file located at `src/sentry.cr` into a your project at `dev/sentry.cr`.
 
+<p align="center">
+  <img width="450" title="sentry" alt="sentry" src="https://raw.githubusercontent.com/samueleaton/design/master/sentry.gif" />
+</p>
+
 ## Usage
 
 Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr`, simply run (from the root directory of your app):
