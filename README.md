@@ -4,7 +4,7 @@ Build/Runs your crystal application, watches files, and rebuilds/reruns app on f
 
 ## Installation
 
-To install in you project, from the root directory of your project, run:
+To install in your project, from the root directory of your project, run:
 ```bash
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
 ```
@@ -31,7 +31,7 @@ BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app" crysta
 
 ## Why?
 
-Docker.
+Docker, mainly.
 
 It is tiring to have to stop and restart an app on every change. This becomes especially annoying when running the app in a docker container, where one would need to totally rebuild the docker image for every change.
 
