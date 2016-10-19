@@ -19,7 +19,7 @@ OptionParser.parse! do |parser|
   parser.on(
     "-w FILE",
     "--watch=FILE",
-    "Overrides the default build command") do |file|
+    "Overrides default files and appends to list of watched files") do |file|
     unless files_cleared
       files.clear
       files_cleared = true
