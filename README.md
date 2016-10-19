@@ -17,10 +17,10 @@ This install script is just a convenience. If it does not work, simply: (1) plac
 
 ## Usage
 
-Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr`, simply run (from the root directory of your app):
+Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr` and compiled into the root of your app as `sentry`, simply run:
 
 ```bash
-crystal dev/sentry.cr
+./sentry [options]
 ```
 
 ### Options
@@ -37,7 +37,7 @@ crystal dev/sentry.cr
 ./sentry -b "crystal build --release ./src/my_app.cr"
 ```
 
-The default build command is `crystal build ./src/[app_name].cr`.
+The default build command is `crystal build ./src/[app_name].cr`. The release flag is omitted by default for faster compilation time while you are developing.
 
 #### Override Default Run Command
 
@@ -55,7 +55,7 @@ The default run command is `./[app_name]`.
 
 The default files being watched are `["./src/**/*.cr"]`.
 
-By specifying files to watch, the default will be omitted.
+By specifying files to watch, the default will be omitted. So if you want to watch all of the file in your `src` directory, you will need to specify that like in the above example.
 
 #### Show Info Before Running
 
@@ -79,10 +79,11 @@ $ ./sentry -i
 ```
 
 ## Why?
+(1) It is tiring to have to stop and restart an app on every change.
 
-Docker, mainly.
+(2) Docker, mainly.
 
-It is tiring to have to stop and restart an app on every change. This becomes especially annoying when running the app in a docker container, where one would need to totally rebuild the docker image for every change.
+Stop and restarting your app is especially expensive (and annoying) when running the app in a docker container, where one would need to totally rebuild the docker image for every change.
 
 Now, for development, simply run sentry in your docker container, and it will rebuild the app from the docker container on any changes, without rebuilding the docker image/container.
 
