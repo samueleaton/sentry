@@ -9,7 +9,7 @@ To install in your project, from the root directory of your project, run:
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
 ```
 
-This install script is just a convenience. If it does not work, simply place the file located at `src/sentry.cr` into a your project at `dev/sentry.cr`.
+This install script is just a convenience. If it does not work, simply: (1) place the file located at `src/sentry.cr` into a your project at `dev/sentry.cr`, (2) replace any instances of `[app_name]` with your app name, and (3) compile sentry by doing `crystal dev/sentry.cr -o ./sentry`.
 
 <p align="center">
   <img width="450" title="sentry" alt="sentry" src="https://raw.githubusercontent.com/samueleaton/design/master/sentry.gif" />
@@ -17,27 +17,75 @@ This install script is just a convenience. If it does not work, simply place the
 
 ## Usage
 
-Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr`, simply run (from the root directory of your app):
+Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr` and compiled into the root of your app as `sentry`, simply run:
 
 ```bash
-crystal dev/sentry.cr
+./sentry [options]
 ```
 
-You can override the `build` and `run` commands by setting the `BUILD` and `RUN` environment variables, respectively:
+### Options
+
+#### Show Help Menu
 
 ```bash
-BUILD="crystal build src/my_app.cr" RUN="POSTGRES_USER=postgres ./my_app" crystal dev/sentry.cr
+./sentry --help
+```
+
+#### Override Default Build Command
+
+```bash
+./sentry -b "crystal build --release ./src/my_app.cr"
+```
+
+The default build command is `crystal build ./src/[app_name].cr`. The release flag is omitted by default for faster compilation time while you are developing.
+
+#### Override Default Run Command
+
+```bash
+./sentry -r "./my_app"
+```
+
+The default run command is `./[app_name]`.
+
+#### Override Default Files to Watch
+
+```bash
+./sentry -w "./src/**/*.cr" -w "./lib/**/*.cr"
+```
+
+The default files being watched are `["./src/**/*.cr"]`.
+
+By specifying files to watch, the default will be omitted. So if you want to watch all of the file in your `src` directory, you will need to specify that like in the above example.
+
+#### Show Info Before Running
+
+This shows the values for the build command, run command, and watched files.
+
+```bash
+./sentry -i
+```
+
+Example  
+```
+$ ./sentry -i
+
+  build:  crystal build ./src/my_app.cr
+  run:  ./my_app
+  files:  ["./src/**/*.cr"]
+
+🤖  sentry is vigilant. beep-boop...
+...
+...
 ```
 
 ## Why?
+(1) It is tiring to have to stop and restart an app on every change.
 
-Docker, mainly.
+(2) Docker!
 
-It is tiring to have to stop and restart an app on every change. This becomes especially annoying when running the app in a docker container, where one would need to totally rebuild the docker image for every change.
+Stop and restarting your app is especially expensive (and annoying) when running the app in a docker container, where one would need to totally rebuild the docker image for every change.
 
 Now, for development, simply run sentry in your docker container, and it will rebuild the app from the docker container on any changes, without rebuilding the docker image/container.
-
-If you aren't using docker, no biggie, it still works.
 
 ## Contributing
 
