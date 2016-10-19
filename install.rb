@@ -29,6 +29,9 @@ sentry_code.gsub!(/\[app_name\]/, app_name)
 FileUtils.mkdir_p "./dev"
 File.write "./dev/sentry.cr", sentry_code
 
-puts "🤖  sentry installed."
+puts "Compiling sentry..."
+system "crystal build --release ./dev/sentry.cr -o ./sentry"
+
+puts "🤖  sentry installed!"
 puts "\nTo run, do (from you app's root directory):
-  crystal ./dev/sentry.cr\n\n"
+  ./sentry\n\n"

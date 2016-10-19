@@ -1,19 +1,72 @@
+require "option_parser"
+
+build_command = "crystal build ./src/[app_name].cr"
+run_command = "./[app_name]"
+files = ["./src/**/*.cr"]
+files_cleared = false
+show_help = false
+
+OptionParser.parse! do |parser|
+  parser.banner = "Usage: ./sentry [options]"
+  parser.on(
+    "-r RUN_COMMAND",
+    "--run=RUN_COMMAND",
+    "Overrides the default run command") { |command| run_command = command }
+  parser.on(
+    "-b BUILD_COMMAND",
+    "--build=BUILD_COMMAND",
+    "Overrides the default build command") { |command| build_command = command }
+  parser.on(
+    "-w FILE",
+    "--watch=FILE",
+    "Overrides the default build command") do |file|
+    unless files_cleared
+      files.clear
+      files_cleared = true
+    end
+    files << file
+  end
+  parser.on(
+    "-i",
+    "--info",
+    "Shows the values for build command, run command, and watched files"
+    ) do
+    puts "
+      build: \t#{build_command}
+      run: \t#{run_command}
+      files: \t#{files}
+    "
+  end
+  parser.on(
+    "-h",
+    "--help",
+    "Show this help") do
+    puts parser
+    exit 0
+  end
+end
+
 module Sentry
-  FILES = ["./src/**/*.cr"]
-  BUILD_APP_COMMAND = ENV["BUILD"]? || "crystal build ./src/[app_name].cr"
-  RUN_APP_COMMAND = ENV["RUN"]? || "./[app_name]"
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
   class ProcessRunner
+
     getter  app_process : (Nil | Process) = nil,
             build_process : (Nil | Process::Status) = nil
     
+    def initialize(build_command : String, run_command : String, files)
+      @build_command = build_command
+      @run_command = run_command
+      @files = [] of String
+      @files = files
+    end
+
     private def build_app_process
-      @build_process = Process.run(BUILD_APP_COMMAND, shell: true, output: true, error: true)
+      build_process = Process.run(@build_command, shell: true, output: true, error: true)
     end
 
     private def create_app_process
-      @app_process = Process.new(RUN_APP_COMMAND, output: true, error: true)
+      @app_process = Process.new(@run_command, output: true, error: true)
     end
 
     private def get_timestamp(file : String)
@@ -34,8 +87,8 @@ module Sentry
     def scan_files
       file_changed = false
       app_process = @app_process
-
-      Dir.glob(FILES) do |file|
+      files = @files
+      Dir.glob(files) do |file|
         timestamp = get_timestamp(file)
         if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
           FILE_TIMESTAMPS[file] = timestamp
@@ -53,7 +106,11 @@ module Sentry
   end
 end
 
-process_runner = Sentry::ProcessRunner.new
+process_runner = Sentry::ProcessRunner.new(
+  files: files,
+  build_command: build_command,
+  run_command: run_command
+)
 
 puts "🤖  sentry is vigilant. beep-boop..."
 
