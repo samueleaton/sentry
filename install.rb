@@ -34,4 +34,6 @@ system "crystal build --release ./dev/sentry.cr -o ./sentry"
 
 puts "🤖  sentry installed!"
 puts "\nTo run, do (from you app's root directory):
-  ./sentry\n\n"
+  ./sentry\n"
+puts "\nTo see options:
+  ./sentry --help\n\n"
