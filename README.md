@@ -1,4 +1,10 @@
-# Sentry 🤖  
+<br>  
+<p align="center">
+<img width="350" title="cubbie" alt="cubbie!" src="https://raw.githubusercontent.com/samueleaton/design/master/sentry.png">
+</p>
+<br> 
+
+# Sentry 🤖 
 
 Build/Runs your crystal application, watches files, and rebuilds/reruns app on file changes
 
