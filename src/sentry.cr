@@ -51,10 +51,10 @@ module Sentry
 
   class ProcessRunner
 
-    getter  app_process : (Nil | Process) = nil,
-            build_process : (Nil | Process::Status) = nil
+    getter app_process : (Nil | Process) = nil
     
     def initialize(build_command : String, run_command : String, files)
+      @app_built = false
       @build_command = build_command
       @run_command = run_command
       @files = [] of String
@@ -62,7 +62,7 @@ module Sentry
     end
 
     private def build_app_process
-      build_process = Process.run(@build_command, shell: true, output: true, error: true)
+      Process.run(@build_command, shell: true, output: true, error: true)
     end
 
     private def create_app_process
@@ -79,9 +79,15 @@ module Sentry
         app_process.kill unless app_process.terminated?
       end
 
-      puts "🤖  compiling app..."
+      puts "🤖  compiling [app_name]..."
       build_result = build_app_process()
-      create_app_process() if build_result && build_result.success?
+      if build_result && build_result.success?
+        @app_built = true
+        create_app_process()
+      elsif !@app_built # if build fails on first time compiling, then exit
+        puts "🤖  Compile time errors detected. SentryBot shutting down..."
+        exit 1
+      end
     end
 
     def scan_files
@@ -112,7 +118,7 @@ process_runner = Sentry::ProcessRunner.new(
   run_command: run_command
 )
 
-puts "🤖  sentry is vigilant. beep-boop..."
+puts "🤖  Your SentryBot is vigilant. beep-boop..."
 
 loop do
   process_runner.scan_files
