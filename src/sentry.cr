@@ -2,7 +2,7 @@ require "option_parser"
 
 build_command = "crystal build ./src/[app_name].cr"
 run_command = "./[app_name]"
-files = ["./src/**/*.cr"]
+files = ["./src/**/*.cr", "./src/**/*.ecr"]
 files_cleared = false
 show_help = false
 
@@ -52,7 +52,7 @@ module Sentry
   class ProcessRunner
 
     getter app_process : (Nil | Process) = nil
-    
+
     def initialize(build_command : String, run_command : String, files)
       @app_built = false
       @build_command = build_command
