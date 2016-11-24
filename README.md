@@ -1,10 +1,10 @@
-<br>  
+<br>
 <p align="center">
 <img width="350" title="cubbie" alt="cubbie!" src="https://raw.githubusercontent.com/samueleaton/design/master/sentry.png">
 </p>
-<br> 
+<br>
 
-# Sentry 🤖 
+# Sentry 🤖
 
 Build/Runs your crystal application, watches files, and rebuilds/reruns app on file changes
 
@@ -71,7 +71,7 @@ This shows the values for the build command, run command, and watched files.
 ./sentry -i
 ```
 
-Example  
+Example
 ```
 $ ./sentry -i
 
@@ -96,9 +96,9 @@ Now, for development, simply run sentry in your docker container, and it will re
 ## Contributing
 
 1. Fork it ( https://github.com/samueleaton/sentry/fork )
-2. Create your feature branch (git checkout -b feat/my-new-feature)
+2. Create your feature branch (git checkout -b feat-my-new-feature)
 3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin feat/my-new-feature)
+4. Push to the branch (git push origin feat-my-new-feature)
 5. Create a new Pull Request
 
 ## Contributors
