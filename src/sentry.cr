@@ -1,7 +1,9 @@
 require "option_parser"
 
 build_command = "crystal build ./src/[app_name].cr"
+build_args = [] of String
 run_command = "./[app_name]"
+run_args = [] of String
 files = ["./src/**/*.cr", "./src/**/*.ecr"]
 files_cleared = false
 show_help = false
@@ -12,6 +14,18 @@ OptionParser.parse! do |parser|
     "-r RUN_COMMAND",
     "--run=RUN_COMMAND",
     "Overrides the default run command") { |command| run_command = command }
+  parser.on(
+    "--run-args=RUN_ARGS",
+    "Specifies arguments for the run command") do |args|
+      args_arr = args.strip.split(" ")
+      run_args = args_arr if args_arr.size > 0
+    end
+  parser.on(
+    "--build-args=BUILD_ARGS",
+    "Specifies arguments for the build command") do |args|
+      args_arr = args.strip.split(" ")
+      build_args = args_arr if args_arr.size > 0
+    end
   parser.on(
     "-b BUILD_COMMAND",
     "--build=BUILD_COMMAND",
@@ -32,9 +46,11 @@ OptionParser.parse! do |parser|
     "Shows the values for build command, run command, and watched files"
     ) do
     puts "
-      build: \t#{build_command}
-      run: \t#{run_command}
-      files: \t#{files}
+      build:      #{build_command}
+      build args: #{build_args}
+      run:        #{run_command}
+      run args:   #{run_args}
+      files:      #{files}
     "
   end
   parser.on(
@@ -53,20 +69,32 @@ module Sentry
 
     getter app_process : (Nil | Process) = nil
 
-    def initialize(build_command : String, run_command : String, files)
+    def initialize(build_command : String, build_args : Array(String), run_command : String, run_args : Array(String), files : Array(String))
       @app_built = false
       @build_command = build_command
+      @build_args = build_args
       @run_command = run_command
+      @run_args = run_args
       @files = [] of String
       @files = files
     end
 
     private def build_app_process
-      Process.run(@build_command, shell: true, output: true, error: true)
+      build_args = @build_args
+      if build_args.size > 0
+        Process.run(@build_command, build_args, shell: true, output: true, error: true)
+      else
+        Process.run(@build_command, shell: true, output: true, error: true)
+      end
     end
 
     private def create_app_process
-      @app_process = Process.new(@run_command, output: true, error: true)
+      run_args = @run_args
+      if run_args.size > 0
+        @app_process = Process.new(@run_command, run_args, output: true, error: true)
+      else
+        @app_process = Process.new(@run_command, output: true, error: true)
+      end
     end
 
     private def get_timestamp(file : String)
@@ -113,9 +141,11 @@ module Sentry
 end
 
 process_runner = Sentry::ProcessRunner.new(
-  files: files,
   build_command: build_command,
-  run_command: run_command
+  build_args: build_args,
+  run_command: run_command,
+  run_args: run_args,
+  files: files
 )
 
 puts "🤖  Your SentryBot is vigilant. beep-boop..."

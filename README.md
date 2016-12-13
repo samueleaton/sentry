@@ -84,6 +84,14 @@ $ ./sentry -i
 ...
 ```
 
+#### Setting Build or Run Arguments
+
+If you prefer granularity, you can specify arguments to the build or run commands using the `--build-args` or `--run-args` flags followed by a string of arguments.
+
+```bash
+./sentry -r "crystal" --run-args "spec --debug"
+```
+
 ## Why?
 (1) It is tiring to have to stop and restart an app on every change.
 
