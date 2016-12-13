@@ -75,13 +75,24 @@ Example
 ```
 $ ./sentry -i
 
-  build:  crystal build ./src/my_app.cr
-  run:  ./my_app
-  files:  ["./src/**/*.cr"]
+  build:      crystal build ./src/my_app.cr
+  build args: []
+  run:        ./my_app
+  run args:   []
+  files:      ["./src/**/*.cr", "./src/**/*.ecr", "./spec/**/*.cr"]
+
 
 🤖  sentry is vigilant. beep-boop...
 ...
 ...
+```
+
+#### Setting Build or Run Arguments
+
+If you prefer granularity, you can specify arguments to the build or run commands using the `--build-args` or `--run-args` flags followed by a string of arguments.
+
+```bash
+./sentry -r "crystal" --run-args "spec --debug"
 ```
 
 ## Why?
