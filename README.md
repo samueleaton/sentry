@@ -75,9 +75,12 @@ Example
 ```
 $ ./sentry -i
 
-  build:  crystal build ./src/my_app.cr
-  run:  ./my_app
-  files:  ["./src/**/*.cr"]
+  build:      crystal build ./src/my_app.cr
+  build args: []
+  run:        ./my_app
+  run args:   []
+  files:      ["./src/**/*.cr", "./src/**/*.ecr", "./spec/**/*.cr"]
+
 
 🤖  sentry is vigilant. beep-boop...
 ...
