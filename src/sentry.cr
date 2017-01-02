@@ -1,92 +1,28 @@
-require "option_parser"
-
-build_command = "crystal build ./src/[app_name].cr"
-build_args = [] of String
-run_command = "./[app_name]"
-run_args = [] of String
-files = ["./src/**/*.cr", "./src/**/*.ecr"]
-files_cleared = false
-show_help = false
-should_build = true
-
-OptionParser.parse! do |parser|
-  parser.banner = "Usage: ./sentry [options]"
-  parser.on(
-    "-b COMMAND",
-    "--build=COMMAND",
-    "Overrides the default build command") { |command| build_command = command }
-  parser.on(
-    "--build-args=ARGS",
-    "Specifies arguments for the build command") do |args|
-    args_arr = args.strip.split(" ")
-    build_args = args_arr if args_arr.size > 0
-  end
-  parser.on(
-    "--no-build",
-    "Skips the build step") { should_build = false }
-  parser.on(
-    "-r COMMAND",
-    "--run=COMMAND",
-    "Overrides the default run command") { |command| run_command = command }
-  parser.on(
-    "--run-args=ARGS",
-    "Specifies arguments for the run command") do |args|
-    args_arr = args.strip.split(" ")
-    run_args = args_arr if args_arr.size > 0
-  end
-  parser.on(
-    "-w FILE",
-    "--watch=FILE",
-    "Overrides default files and appends to list of watched files") do |file|
-    unless files_cleared
-      files.clear
-      files_cleared = true
-    end
-    files << file
-  end
-  parser.on(
-    "-i",
-    "--info",
-    "Shows the values for build/run commands, build/run args, and watched files") do
-    puts "
-      build:      #{build_command}
-      build args: #{build_args}
-      run:        #{run_command}
-      run args:   #{run_args}
-      files:      #{files}
-    "
-  end
-  parser.on(
-    "-h",
-    "--help",
-    "Show this help") do
-    puts parser
-    exit 0
-  end
-end
-
 module Sentry
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
   class ProcessRunner
     getter app_process : (Nil | Process) = nil
-    property should_build : Bool = true
+    property process_name : String
+    property should_build = true
     property files = [] of String
 
     def initialize(
-                   build_command : String,
-                   build_args : Array(String),
-                   run_command : String,
-                   run_args : Array(String))
+                   @process_name : String,
+                   @build_command : String,
+                   @run_command : String,
+                   @build_args : Array(String) = [] of String,
+                   @run_args : Array(String) = [] of String,
+                   files = [] of String,
+                   should_build = true)
+      @files = files
+      @should_build = should_build
+      @should_kill = false
       @app_built = false
-      @build_command = build_command
-      @build_args = build_args
-      @run_command = run_command
-      @run_args = run_args
     end
 
     private def build_app_process
-      puts "🤖  compiling [app_name]..."
+      puts "🤖  compiling #{process_name}..."
       build_args = @build_args
       if build_args.size > 0
         Process.run(@build_command, build_args, shell: true, output: true, error: true)
@@ -99,12 +35,12 @@ module Sentry
       app_process = @app_process
       if app_process.is_a? Process
         unless app_process.terminated?
-          puts "🤖  killing [app_name]..."
+          puts "🤖  killing #{process_name}..."
           app_process.kill
         end
       end
 
-      puts "🤖  starting [app_name]..."
+      puts "🤖  starting #{process_name}..."
       run_args = @run_args
       if run_args.size > 0
         @app_process = Process.new(@run_command, run_args, output: true, error: true)
@@ -152,21 +88,22 @@ module Sentry
 
       start_app() if (file_changed || app_process.nil?)
     end
+
+    def run
+      puts "🤖  Your SentryBot is vigilant. beep-boop..."
+
+      loop do
+        if @should_kill
+          puts "🤖  Powering down your SentryBot..."
+          break
+        end
+        scan_files
+        sleep 1
+      end
+    end
+
+    def kill
+      @should_kill = true
+    end
   end
-end
-
-process_runner = Sentry::ProcessRunner.new(
-  build_command: build_command,
-  build_args: build_args,
-  run_command: run_command,
-  run_args: run_args
-)
-process_runner.should_build = should_build
-process_runner.files = files
-
-puts "🤖  Your SentryBot is vigilant. beep-boop..."
-
-loop do
-  process_runner.scan_files
-  sleep 1
 end
