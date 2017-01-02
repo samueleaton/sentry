@@ -16,7 +16,7 @@ OptionParser.parse! do |parser|
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the name of the app process") { |name| process_name = name }
+    "Sets the name of the app process (current name: #{process_name})") { |name| process_name = name }
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
