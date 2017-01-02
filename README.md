@@ -15,11 +15,13 @@ To install in your project, from the root directory of your project, run:
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
 ```
 
-This install script is just a convenience. If it does not work, simply: (1) place the file located at `src/sentry.cr` into a your project at `dev/sentry.cr`, (2) replace any instances of `[app_name]` with your app name, and (3) compile sentry by doing `crystal dev/sentry.cr -o ./sentry`.
+This will install the Sentry CLI tool. To use the Crystal API, see [CRYSTAL_API.md](//github.com/samueleaton/sentry/CRYSTAL_API.md).
 
 <p align="center">
   <img width="450" title="sentry" alt="sentry" src="https://raw.githubusercontent.com/samueleaton/design/master/sentry.gif" />
 </p>
+
+**Troubleshooting the install:** This ruby install script is just a convenience. If it does not work, simply: (1) place the files located in the `src` dir into a your project in a `dev/` dir, (2) replace any instances of `[process_name]` with your app name, and (3) compile sentry by doing `crystal dev/sentry_cli.cr -o ./sentry`.
 
 ## Usage
 
@@ -94,6 +96,10 @@ If you prefer granularity, you can specify arguments to the build or run command
 ```bash
 ./sentry -r "crystal" --run-args "spec --debug"
 ```
+
+## Sentry Crystal API
+
+See [CRYSTAL_API.md](//github.com/samueleaton/sentry/CRYSTAL_API.md)
 
 ## Why?
 (1) It is tiring to have to stop and restart an app on every change.
