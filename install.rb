@@ -3,10 +3,8 @@ require "net/http"
 require "uri"
 require 'fileutils'
 
-#USER = "samueleaton"
-#BRANCH = "master"
-USER = "TechMagister"
-BRANCH = "change_cli"
+USER = "samueleaton"
+BRANCH = "master"
 
 DEST_DIR = "./dev"
 MAIN_FILE = "sentry_cli.cr"
