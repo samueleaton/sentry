@@ -5,3 +5,8 @@ authors:
   - Sam Eaton <sam@devmunchies.com>
 
 license: ISC
+
+dependencies:
+  cli:
+    github: mosop/cli
+    branch: master

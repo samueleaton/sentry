@@ -1,52 +1,57 @@
+# coding: utf-8
 require "net/http"
 require "uri"
-require "yaml"
 require 'fileutils'
 
-sentry_uri = URI.parse("https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry.cr")
-response = Net::HTTP.get_response(sentry_uri)
+USER = "samueleaton"
+BRANCH = "master"
 
-if response.code.to_i > 299
-  puts "HTTP request error"
-  puts response.msg
-  exit 1
+DEST_DIR = "./dev"
+MAIN_FILE = "sentry_cli.cr"
+BIN = "./sentry"
+
+REMOTE_SOURCES = [
+  "https://raw.githubusercontent.com/#{USER}/sentry/#{BRANCH}/src/sentry.cr",
+  "https://raw.githubusercontent.com/#{USER}/sentry/#{BRANCH}/src/sentry_cli.cr",
+  "https://raw.githubusercontent.com/#{USER}/sentry/#{BRANCH}/src/sentry_command.cr"
+]
+
+sources = {}
+
+STDOUT.write "Getting sources : "
+
+REMOTE_SOURCES.each do |source_uri|
+  uri = URI.parse source_uri
+  response = Net::HTTP.get_response uri
+  if response.code.to_i > 299
+    STDERR.puts "HTTP request error for #{File.basename source_uri}"
+    STDERR.puts "URL : #{source_uri}"
+    STDERR.puts "Error message : #{response.msg}"
+    exit 1
+  else
+    STDOUT.write '.'
+    sources[File.basename source_uri] = response.body
+  end
+end
+puts
+
+FileUtils.mkdir_p DEST_DIR
+
+sources.each do |filename, content|
+  File.write "#{DEST_DIR}/#{filename}", content
 end
 
-sentry_code = response.body
-
-sentry_cli_uri = URI.parse("https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry_cli.cr")
-response = Net::HTTP.get_response(sentry_cli_uri)
-
-if response.code.to_i > 299
-  puts "HTTP request error"
-  puts response.msg
-  exit 1
-end
-
-sentry_cli_code = response.body
-
-begin
-  shard_yml = YAML.load(File.read "./shard.yml")
-  raise "missing key in shard.yml: name" unless shard_yml.has_key? "name"
-rescue => e
-  puts "Error with shard.yml"
-  puts e
-  exit 1
-end
-
-process_name = shard_yml["name"]
-sentry_code.gsub!(/\[process_name\]/, process_name)
-sentry_cli_code.gsub!(/\[process_name\]/, process_name)
-
-FileUtils.mkdir_p "./dev"
-File.write "./dev/sentry.cr", sentry_code
-File.write "./dev/sentry_cli.cr", sentry_cli_code
 
 puts "Compiling sentry..."
-system "crystal build --release ./dev/sentry_cli.cr -o ./sentry"
+system "crystal build --release #{DEST_DIR}/#{MAIN_FILE} -o #{BIN}"
 
 puts "🤖  sentry installed!"
-puts "\nTo run, do (from your app's root directory):
-  ./sentry\n"
-puts "\nTo see options:
-  ./sentry --help\n\n"
+puts "
+To run, do (from your app's root directory):
+  #{BIN}
+"
+puts "
+To see options:
+  #{BIN} --help
+
+"
