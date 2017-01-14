@@ -14,11 +14,13 @@ module Sentry
                    @build_args : Array(String) = [] of String,
                    @run_args : Array(String) = [] of String,
                    files = [] of String,
-                   should_build = true)
+                   should_build = true,
+                   initial_delay = 0)
       @files = files
       @should_build = should_build
       @should_kill = false
       @app_built = false
+      @initial_delay = initial_delay
     end
 
     private def build_app_process
@@ -90,6 +92,11 @@ module Sentry
     end
 
     def run
+      if @initial_delay > 0
+        puts "🤖  SentryBot delayed for #{@initial_delay}ms..."
+        sleep @initial_delay.milliseconds
+      end
+
       puts "🤖  Your SentryBot is vigilant. beep-boop..."
 
       loop do

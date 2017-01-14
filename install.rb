@@ -1,6 +1,5 @@
 require "net/http"
 require "uri"
-require "yaml"
 require 'fileutils'
 
 sentry_uri = URI.parse("https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry.cr")
@@ -24,19 +23,6 @@ if response.code.to_i > 299
 end
 
 sentry_cli_code = response.body
-
-begin
-  shard_yml = YAML.load(File.read "./shard.yml")
-  raise "missing key in shard.yml: name" unless shard_yml.has_key? "name"
-rescue => e
-  puts "Error with shard.yml"
-  puts e
-  exit 1
-end
-
-process_name = shard_yml["name"]
-sentry_code.gsub!(/\[process_name\]/, process_name)
-sentry_cli_code.gsub!(/\[process_name\]/, process_name)
 
 FileUtils.mkdir_p "./dev"
 File.write "./dev/sentry.cr", sentry_code
