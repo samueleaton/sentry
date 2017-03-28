@@ -19,7 +19,6 @@ files = ["./src/**/*.cr", "./src/**/*.ecr"]
 files_cleared = false
 show_help = false
 should_build = true
-initial_delay = 0
 
 OptionParser.parse! do |parser|
   parser.banner = "Usage: ./sentry [options]"
@@ -61,11 +60,6 @@ OptionParser.parse! do |parser|
     files << file
   end
   parser.on(
-    "--init-delay MS",
-    "Sets an initial delay (in milliseconds) for sentry to run") do |ms|
-    initial_delay = ms.to_i
-  end
-  parser.on(
     "-i",
     "--info",
     "Shows the values for build/run commands, build/run args, and watched files") do
@@ -95,8 +89,7 @@ if process_name
     build_args: build_args,
     run_args: run_args,
     should_build: should_build,
-    files: files,
-    initial_delay: initial_delay
+    files: files
   )
 
   process_runner.run

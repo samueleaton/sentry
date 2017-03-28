@@ -28,11 +28,11 @@ FileUtils.mkdir_p "./dev"
 File.write "./dev/sentry.cr", sentry_code
 File.write "./dev/sentry_cli.cr", sentry_cli_code
 
-puts "Compiling sentry..."
+puts "Compiling sentry using --release..."
 system "crystal build --release ./dev/sentry_cli.cr -o ./sentry"
 
 puts "🤖  sentry installed!"
-puts "\nTo run, do (from your app's root directory):
+puts "\nTo execute sentry, do:
   ./sentry\n"
 puts "\nTo see options:
   ./sentry --help\n\n"
