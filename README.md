@@ -21,7 +21,7 @@ This will install the Sentry CLI tool. To use the Crystal API, see [CRYSTAL_API.
   <img width="450" title="sentry" alt="sentry" src="https://raw.githubusercontent.com/samueleaton/design/master/sentry.gif" />
 </p>
 
-**Troubleshooting the install:** This ruby install script is just a convenience. If it does not work, simply: (1) place the files located in the `src` dir into a your project in a `dev/` dir, (2) replace any instances of `[process_name]` with your app name, and (3) compile sentry by doing `crystal dev/sentry_cli.cr -o ./sentry`.
+**Troubleshooting the install:** This ruby install script is just a convenience. If it does not work, simply: (1) place the files located in the `src` dir into a your project in a `dev/` dir, and (2) compile sentry by doing `crystal build --release dev/sentry_cli.cr -o ./sentry`.
 
 ## Usage
 
