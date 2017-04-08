@@ -3,7 +3,9 @@ require "uri"
 require 'fileutils'
 
 sentry_uri = URI.parse("https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry.cr")
-response = Net::HTTP.get_response(sentry_uri)
+req = Net::HTTP.new(sentry_uri.host, sentry_uri.port)
+req.use_ssl = (sentry_uri.scheme == "https")
+response = req.request(Net::HTTP::Get.new(sentry_uri.request_uri))
 
 if response.code.to_i > 299
   puts "HTTP request error"
@@ -14,7 +16,9 @@ end
 sentry_code = response.body
 
 sentry_cli_uri = URI.parse("https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry_cli.cr")
-response = Net::HTTP.get_response(sentry_cli_uri)
+req = Net::HTTP.new(sentry_cli_uri.host, sentry_cli_uri.port)
+req.use_ssl = (sentry_cli_uri.scheme == "https")
+response = req.request(Net::HTTP::Get.new(sentry_cli_uri.request_uri))
 
 if response.code.to_i > 299
   puts "HTTP request error"
@@ -28,7 +32,7 @@ FileUtils.mkdir_p "./dev"
 File.write "./dev/sentry.cr", sentry_code
 File.write "./dev/sentry_cli.cr", sentry_cli_code
 
-puts "Compiling sentry using --release..."
+puts "Compiling sentry using --release flag..."
 system "crystal build --release ./dev/sentry_cli.cr -o ./sentry"
 
 puts "🤖  sentry installed!"
