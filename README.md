@@ -26,9 +26,9 @@ This will install the Sentry CLI tool. To use the Crystal API, see [CRYSTAL_API.
 **Troubleshooting the install:** This ruby install script is just a convenience. If it does not work, simply: (1) place the files located in the `src` dir into a your project in a `dev/` dir, and (2) compile sentry by doing `crystal build --release dev/sentry_cli.cr -o ./sentry`.
 
 
-### Installation using shards.yml and Makefile
+### Installation using shard.yml and Makefile
 
-Add Sentry to your `shards.yml`'s `development_dependencies` section:
+Add Sentry to your `shard.yml`'s `development_dependencies` section:
 
 ```yml
 development_dependencies:
