@@ -10,6 +10,8 @@ Build/Runs your crystal application, watches files, and rebuilds/reruns app on f
 
 ## Installation
 
+### Installation using ruby script
+
 To install in your project, from the root directory of your project, run:
 ```bash
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
@@ -22,6 +24,32 @@ This will install the Sentry CLI tool. To use the Crystal API, see [CRYSTAL_API.
 </p>
 
 **Troubleshooting the install:** This ruby install script is just a convenience. If it does not work, simply: (1) place the files located in the `src` dir into a your project in a `dev/` dir, and (2) compile sentry by doing `crystal build --release dev/sentry_cli.cr -o ./sentry`.
+
+
+### Installation using shards.yml and Makefile
+
+Add Sentry to your `shards.yml`'s `development_dependencies` section:
+
+```yml
+development_dependencies:
+  sentry:
+    github: samueleaton/sentry
+```
+
+And add following instructions to your `Makefile`:
+
+```Makefile
+sentry: ./lib/sentry/src/sentry_cli.cr
+	mkdir -p ./bin/
+	crystal build --release ./lib/sentry/src/sentry_cli.cr -o ./bin/sentry
+	@echo "Sentry is compiled to ./bin/sentry"
+```
+
+Install shards using command `$ shards install`, which downloads sentry under directory `./lib/sentry/`. And now you can compile sentry `$ make sentry`. It creates runnable binary `./bin/sentry` that can be used as following:
+
+```bash
+./bin/sentry [options]
+```
 
 ## Usage
 
