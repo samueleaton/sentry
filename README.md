@@ -12,7 +12,7 @@ Build/Runs your crystal application, watches files, and rebuilds/reruns app on f
 
 To install in your project, from the root directory of your project, run:
 ```bash
-curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.rb | ruby
+curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.cr | crystal eval
 ```
 
 This will install the Sentry CLI tool. To use the Crystal API, see [CRYSTAL_API.md](./CRYSTAL_API.md).
