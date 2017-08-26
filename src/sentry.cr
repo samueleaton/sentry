@@ -25,9 +25,9 @@ module Sentry
       puts "🤖  compiling #{process_name}..."
       build_args = @build_args
       if build_args.size > 0
-        Process.run(@build_command, build_args, shell: true, output: true, error: true)
+        Process.run(@build_command, build_args, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
       else
-        Process.run(@build_command, shell: true, output: true, error: true)
+        Process.run(@build_command, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
       end
     end
 
@@ -43,9 +43,9 @@ module Sentry
       puts "🤖  starting #{process_name}..."
       run_args = @run_args
       if run_args.size > 0
-        @app_process = Process.new(@run_command, run_args, output: true, error: true)
+        @app_process = Process.new(@run_command, run_args, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
       else
-        @app_process = Process.new(@run_command, output: true, error: true)
+        @app_process = Process.new(@run_command, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
       end
     end
 
