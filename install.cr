@@ -37,7 +37,7 @@ File.write "./dev/sentry_cli.cr", sentry_cli_code
 
 # compile sentry files
 puts "🤖  Compiling sentry using --release flag..."
-build_args = ["build", "--release", "./dev/sentry_cli.cr", "-o", "./sentry"]
+build_args = ["build", "--release", "--no-debug", "./dev/sentry_cli.cr", "-o", "./sentry"]
 system "crystal", build_args
 
 puts "🤖  Sentry installed!"
