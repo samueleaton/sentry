@@ -38,10 +38,14 @@ File.write "./dev/sentry_cli.cr", sentry_cli_code
 # compile sentry files
 puts "🤖  Compiling sentry using --release flag..."
 build_args = ["build", "--release", "./dev/sentry_cli.cr", "-o", "./sentry"]
-system "crystal", build_args
+compile_success = system "crystal", build_args
 
-puts "🤖  Sentry installed!"
-puts "\nTo execute sentry, do:
-  ./sentry\n"
-puts "\nTo see options:
-  ./sentry --help\n\n"
+if compile_success
+  puts "🤖  Sentry installed!"
+  puts "\nTo execute sentry, do:
+    ./sentry\n"
+  puts "\nTo see options:
+    ./sentry --help\n\n"
+else
+  puts "🤖  Bzzt. There was an error compiling sentry."
+end
