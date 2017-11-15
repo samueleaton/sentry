@@ -33,10 +33,14 @@ File.write "./dev/sentry.cr", sentry_code
 File.write "./dev/sentry_cli.cr", sentry_cli_code
 
 puts "Compiling sentry using --release flag..."
-system "crystal build --release ./dev/sentry_cli.cr -o ./sentry"
+compile_success = system "crystal build --release ./dev/sentry_cli.cr -o ./sentry"
 
-puts "🤖  sentry installed!"
-puts "\nTo execute sentry, do:
-  ./sentry\n"
-puts "\nTo see options:
-  ./sentry --help\n\n"
+if compile_success
+  puts "🤖  sentry installed!"
+  puts "\nTo execute sentry, do:
+    ./sentry\n"
+  puts "\nTo see options:
+    ./sentry --help\n\n"
+else
+  puts "🤖  Bzzt. There was an error compiling sentry."
+end
