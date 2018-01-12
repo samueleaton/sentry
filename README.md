@@ -82,14 +82,14 @@ Example
 ```
 $ ./sentry -i
 
+  name:       my_app
   build:      crystal build ./src/my_app.cr
   build args: []
   run:        ./my_app
   run args:   []
-  files:      ["./src/**/*.cr", "./src/**/*.ecr", "./spec/**/*.cr"]
+  files:      ["./src/**/*.cr", "./src/**/*.ecr"]
 
-
-🤖  sentry is vigilant. beep-boop...
+🤖  Your SentryBot is vigilant. beep-boop...
 ...
 ...
 ```
