@@ -15,6 +15,11 @@ To install in your project, from the root directory of your project, run:
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.cr | crystal eval
 ```
 
+If using Crystal version `0.23.1` or lower try the following:
+```bash
+curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/crystal-v0.23.1/install.cr | crystal eval
+```
+
 This will install the Sentry CLI tool. To use the Crystal API, see [CRYSTAL_API.md](./CRYSTAL_API.md).
 
 <p align="center">
