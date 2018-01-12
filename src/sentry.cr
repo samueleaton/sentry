@@ -8,13 +8,14 @@ module Sentry
     property files = [] of String
 
     def initialize(
-                   @process_name : String,
-                   @build_command : String,
-                   @run_command : String,
-                   @build_args : Array(String) = [] of String,
-                   @run_args : Array(String) = [] of String,
-                   files = [] of String,
-                   should_build = true)
+      @process_name : String,
+      @build_command : String,
+      @run_command : String,
+      @build_args : Array(String) = [] of String,
+      @run_args : Array(String) = [] of String,
+      files = [] of String,
+      should_build = true
+    )
       @files = files
       @should_build = should_build
       @should_kill = false
@@ -25,9 +26,9 @@ module Sentry
       puts "🤖  compiling #{process_name}..."
       build_args = @build_args
       if build_args.size > 0
-        Process.run(@build_command, build_args, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
+        Process.run(@build_command, build_args, shell: true, output: true, error: true)
       else
-        Process.run(@build_command, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
+        Process.run(@build_command, shell: true, output: true, error: true)
       end
     end
 
@@ -43,9 +44,9 @@ module Sentry
       puts "🤖  starting #{process_name}..."
       run_args = @run_args
       if run_args.size > 0
-        @app_process = Process.new(@run_command, run_args, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
+        @app_process = Process.new(@run_command, run_args, output: true, error: true)
       else
-        @app_process = Process.new(@run_command, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
+        @app_process = Process.new(@run_command, output: true, error: true)
       end
     end
 

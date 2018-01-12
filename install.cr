@@ -5,7 +5,7 @@ require "file_utils"
 print "🤖  Fetching sentry files..."
 
 # Fetch sentry.cr
-sentry_uri = "https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry.cr"
+sentry_uri = "https://raw.githubusercontent.com/samueleaton/sentry/crystal-v0.23.1/src/sentry.cr"
 fetch_sentry_response = HTTP::Client.get sentry_uri
 
 if fetch_sentry_response.status_code > 299
@@ -17,7 +17,7 @@ end
 sentry_code = fetch_sentry_response.body
 
 # Fetch sentry_cli.cr
-sentry_cli_uri = "https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry_cli.cr"
+sentry_cli_uri = "https://raw.githubusercontent.com/samueleaton/sentry/crystal-v0.23.1/src/sentry_cli.cr"
 fetch_cli_response = HTTP::Client.get sentry_cli_uri
 
 if fetch_cli_response.status_code > 299
