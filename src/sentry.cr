@@ -10,39 +10,50 @@ module Sentry
 
     YAML.mapping(
       name: {
-        type: String?,
-        getter: false,
-        default: nil
+        type:    String?,
+        getter:  false,
+        default: nil,
       },
       info: {
-        type: Bool,
-        default: false
+        type:    Bool,
+        default: false,
       },
       build: {
-        type: String?,
-        getter: false,
-        default: nil
+        type:    String?,
+        getter:  false,
+        default: nil,
       },
       build_args: {
-        type: String,
-        getter: false,
-        default: ""
+        type:    String,
+        getter:  false,
+        default: "",
       },
       run: {
-        type: String?,
-        getter: false,
-        default: nil
+        type:    String?,
+        getter:  false,
+        default: nil,
       },
       run_args: {
-        type: String,
-        getter: false,
-        default: ""
+        type:    String,
+        getter:  false,
+        default: "",
       },
       watch: {
-        type: Array(String),
-        default: ["./src/**/*.cr", "./src/**/*.ecr"]
+        type:    Array(String),
+        default: ["./src/**/*.cr", "./src/**/*.ecr"],
       }
     )
+
+    # Initializing an empty configuration provides no default values.
+    def initialize
+      @name = nil
+      @info = false
+      @build = nil
+      @build_args = ""
+      @run = nil
+      @run_args = ""
+      @watch = [] of String
+    end
 
     def name
       @name ||= self.class.process_name
@@ -64,7 +75,6 @@ module Sentry
       @run_args.strip.split(" ").reject(&.empty?)
     end
 
-
     setter should_build : Bool = true
 
     def should_build?
@@ -77,19 +87,26 @@ module Sentry
       end
     end
 
+    def merge!(other : self)
+      self.name = other.name if other.name
+      self.info = other.info if other.info
+      self.build = other.build if other.build
+      self.build_args = other.build_args.join(" ") unless other.build_args.empty?
+      self.run = other.run if other.run
+      self.run_args = other.run_args.join(" ") unless other.run_args.empty?
+      self.watch = other.watch unless other.watch.empty?
+    end
 
     def to_s(io : IO)
       io << <<-CONFIG
-
-          Sentry configuration:
-              process_name: #{name}
-              info:         #{info}
-              build:        #{build}
-              build_args:   #{build_args}
-              run:          #{run}
-              run_args:     #{run_args}
-              watch:        #{watch}
-
+      🤖  Sentry configuration:
+            process_name: #{name}
+            info:         #{info}
+            build:        #{build}
+            build_args:   #{build_args}
+            run:          #{run}
+            run_args:     #{run_args}
+            watch:        #{watch}
       CONFIG
     end
   end

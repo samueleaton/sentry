@@ -1,67 +1,56 @@
 require "option_parser"
 require "./sentry"
 
-process_name = nil
-CONFIG_FILE_NAME = ".sentry.yml"
-
 begin
   shard_yml = YAML.parse File.read("shard.yml")
   name = shard_yml["name"]?
-  process_name = name.as_s if name
+  Sentry::Config.process_name = name.try(&.as_s)
 rescue e
 end
 
-Sentry::Config.process_name = process_name
-
-config_yaml = ""
-if File.exists?(CONFIG_FILE_NAME)
-  config_yaml = File.read(CONFIG_FILE_NAME)
-end
-
-config = Sentry::Config.from_yaml(config_yaml)
-
-
-
-files_cleared = false
+cli_config = Sentry::Config.new
+cli_config_file_name = ".sentry.yml"
 
 OptionParser.parse! do |parser|
   parser.banner = "Usage: ./sentry [options]"
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the name of the app process (current name: #{config.name})") { |name| config.name = name }
+    "Sets the name of the app process (default name: #{Sentry::Config.process_name})") { |name| cli_config.name = name }
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
-    "Overrides the default build command") { |command| config.build = command }
+    "Overrides the default build command") { |command| cli_config.build = command }
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command") { |args| config.build_args = args }
+    "Specifies arguments for the build command") { |args| cli_config.build_args = args }
   parser.on(
     "--no-build",
-    "Skips the build step") { config.should_build = false }
+    "Skips the build step") { cli_config.should_build = false }
   parser.on(
     "-r COMMAND",
     "--run=COMMAND",
-    "Overrides the default run command") { |command| config.run = command }
+    "Overrides the default run command") { |command| cli_config.run = command }
   parser.on(
     "--run-args=ARGS",
-    "Specifies arguments for the run command") { |args| config.run_args = args }
+    "Specifies arguments for the run command") { |args| cli_config.run_args = args }
   parser.on(
     "-w FILE",
     "--watch=FILE",
     "Overrides default files and appends to list of watched files") do |file|
-    unless files_cleared
-      config.watch.clear
-      files_cleared = true
-    end
-    config.watch << file
+    cli_config.watch << file
+  end
+  parser.on(
+    "-c FILE",
+    "--config=FILE",
+    "Specifies a file to load for automatic configuration (default: '.sentry.yml')") do |file|
+    cli_config_file_name = file
   end
   parser.on(
     "-i",
     "--info",
     "Shows the values for build/run commands, build/run args, and watched files") do
-    config.info = true
+    cli_config.info = true
   end
   parser.on(
     "-h",
@@ -71,6 +60,14 @@ OptionParser.parse! do |parser|
     exit 0
   end
 end
+
+config_yaml = ""
+if File.exists?(cli_config_file_name)
+  config_yaml = File.read(cli_config_file_name)
+end
+
+config = Sentry::Config.from_yaml(config_yaml)
+config.merge!(cli_config)
 
 if config.info
   puts config
