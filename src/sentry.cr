@@ -12,6 +12,7 @@ module Sentry
       display_name: {
         type:    String?,
         getter:  false,
+        setter:  false,
         default: nil,
       },
       info: {
@@ -44,9 +45,12 @@ module Sentry
       }
     )
 
+    property sets_display_name : Bool = false
+
     # Initializing an empty configuration provides no default values.
     def initialize
       @display_name = nil
+      @sets_display_name = false
       @info = false
       @build = nil
       @build_args = ""
@@ -59,8 +63,17 @@ module Sentry
       @display_name ||= self.class.shard_name
     end
 
+    def display_name=(new_display_name : String)
+      @sets_display_name = true
+      @display_name = new_display_name
+    end
+
     def display_name!
       display_name.not_nil!
+    end
+
+    def sets_display_name?
+      @sets_display_name
     end
 
     def build
@@ -92,7 +105,7 @@ module Sentry
     end
 
     def merge!(other : self)
-      self.display_name = other.display_name if other.display_name
+      self.display_name = other.display_name! if other.sets_display_name?
       self.info = other.info if other.info
       self.build = other.build if other.build
       self.build_args = other.build_args.join(" ") unless other.build_args.empty?
