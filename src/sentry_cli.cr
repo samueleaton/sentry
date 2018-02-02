@@ -1,8 +1,8 @@
 require "option_parser"
-require "yaml"
 require "./sentry"
 
 process_name = nil
+CONFIG_FILE_NAME = ".sentry.yml"
 
 begin
   shard_yml = YAML.parse File.read("shard.yml")
@@ -11,66 +11,57 @@ begin
 rescue e
 end
 
-build_args = [] of String
-build_command = "crystal build ./src/#{process_name}.cr"
-run_args = [] of String
-run_command = "./#{process_name}"
-files = ["./src/**/*.cr", "./src/**/*.ecr"]
+Sentry::Config.process_name = process_name
+
+config_yaml = ""
+if File.exists?(CONFIG_FILE_NAME)
+  config_yaml = File.read(CONFIG_FILE_NAME)
+end
+
+config = Sentry::Config.from_yaml(config_yaml)
+
+
+
 files_cleared = false
-show_help = false
-should_build = true
 
 OptionParser.parse! do |parser|
   parser.banner = "Usage: ./sentry [options]"
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the name of the app process (current name: #{process_name})") { |name| process_name = name }
+    "Sets the name of the app process (current name: #{config.name})") { |name| config.name = name }
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
-    "Overrides the default build command") { |command| build_command = command }
+    "Overrides the default build command") { |command| config.build = command }
   parser.on(
     "--build-args=ARGS",
-    "Specifies arguments for the build command") do |args|
-    args_arr = args.strip.split(" ")
-    build_args = args_arr if args_arr.size > 0
-  end
+    "Specifies arguments for the build command") { |args| config.build_args = args }
   parser.on(
     "--no-build",
-    "Skips the build step") { should_build = false }
+    "Skips the build step") { config.should_build = false }
   parser.on(
     "-r COMMAND",
     "--run=COMMAND",
-    "Overrides the default run command") { |command| run_command = command }
+    "Overrides the default run command") { |command| config.run = command }
   parser.on(
     "--run-args=ARGS",
-    "Specifies arguments for the run command") do |args|
-    args_arr = args.strip.split(" ")
-    run_args = args_arr if args_arr.size > 0
-  end
+    "Specifies arguments for the run command") { |args| config.run_args = args }
   parser.on(
     "-w FILE",
     "--watch=FILE",
     "Overrides default files and appends to list of watched files") do |file|
     unless files_cleared
-      files.clear
+      config.watch.clear
       files_cleared = true
     end
-    files << file
+    config.watch << file
   end
   parser.on(
     "-i",
     "--info",
     "Shows the values for build/run commands, build/run args, and watched files") do
-    puts "
-      name:       #{process_name}
-      build:      #{build_command}
-      build args: #{build_args}
-      run:        #{run_command}
-      run args:   #{run_args}
-      files:      #{files}
-    "
+    config.info = true
   end
   parser.on(
     "-h",
@@ -81,15 +72,19 @@ OptionParser.parse! do |parser|
   end
 end
 
-if process_name
+if config.info
+  puts config
+end
+
+if config.name
   process_runner = Sentry::ProcessRunner.new(
-    process_name: process_name.as(String),
-    build_command: build_command,
-    run_command: run_command,
-    build_args: build_args,
-    run_args: run_args,
-    should_build: should_build,
-    files: files
+    process_name: config.name,
+    build_command: config.build,
+    run_command: config.run,
+    build_args: config.build_args,
+    run_args: config.run_args,
+    should_build: config.should_build?,
+    files: config.watch
   )
 
   process_runner.run

@@ -1,5 +1,98 @@
+require "yaml"
+
 module Sentry
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
+
+  class Config
+    # `process_name` is set as a class property so that it can be inferred from
+    # the `shard.yml` in the project directory.
+    class_property! process_name : String?
+
+    YAML.mapping(
+      name: {
+        type: String?,
+        getter: false,
+        default: nil
+      },
+      info: {
+        type: Bool,
+        default: false
+      },
+      build: {
+        type: String?,
+        getter: false,
+        default: nil
+      },
+      build_args: {
+        type: String,
+        getter: false,
+        default: ""
+      },
+      run: {
+        type: String?,
+        getter: false,
+        default: nil
+      },
+      run_args: {
+        type: String,
+        getter: false,
+        default: ""
+      },
+      watch: {
+        type: Array(String),
+        default: ["./src/**/*.cr", "./src/**/*.ecr"]
+      }
+    )
+
+    def name
+      @name ||= self.class.process_name
+    end
+
+    def build
+      @build ||= "crystal build ./src/#{name}.cr"
+    end
+
+    def build_args
+      @build_args.strip.split(" ").reject(&.empty?)
+    end
+
+    def run
+      @run ||= "./#{name}"
+    end
+
+    def run_args
+      @run_args.strip.split(" ").reject(&.empty?)
+    end
+
+
+    setter should_build : Bool = true
+
+    def should_build?
+      @should_build ||= begin
+        if build_command = @build
+          build_command.empty?
+        else
+          false
+        end
+      end
+    end
+
+
+    def to_s(io : IO)
+      io << <<-CONFIG
+
+          Sentry configuration:
+              process_name: #{name}
+              info:         #{info}
+              build:        #{build}
+              build_args:   #{build_args}
+              run:          #{run}
+              run_args:     #{run_args}
+              watch:        #{watch}
+
+      CONFIG
+    end
+  end
 
   class ProcessRunner
     getter app_process : (Nil | Process) = nil
