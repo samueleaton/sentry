@@ -6,9 +6,9 @@
 #
 # Options passed through the command line will override these settings.
 
-# The process name displayed in log output. By default, this is pulled
-# automatically from shard.yml
-name: my-program-name
+# The name of your application when displayed in log output. By default, this
+# is the app name specified in `shard.yml`.
+display_name: my-program-name
 
 # Set this to `true` to show configuration information when starting Sentry.
 info: true

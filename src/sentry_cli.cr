@@ -4,7 +4,7 @@ require "./sentry"
 begin
   shard_yml = YAML.parse File.read("shard.yml")
   name = shard_yml["name"]?
-  Sentry::Config.process_name = name.try(&.as_s)
+  Sentry::Config.shard_name = name.as_s if name
 rescue e
 end
 
@@ -16,7 +16,7 @@ OptionParser.parse! do |parser|
   parser.on(
     "-n NAME",
     "--name=NAME",
-    "Sets the name of the app process (default name: #{Sentry::Config.process_name})") { |name| cli_config.name = name }
+    "Sets the display name of the app process (default name: #{Sentry::Config.shard_name})") { |name| cli_config.display_name = name }
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
@@ -73,9 +73,9 @@ if config.info
   puts config
 end
 
-if config.name
+if Sentry::Config.shard_name
   process_runner = Sentry::ProcessRunner.new(
-    process_name: config.name,
+    display_name: config.display_name!,
     build_command: config.build,
     run_command: config.run,
     build_args: config.build_args,

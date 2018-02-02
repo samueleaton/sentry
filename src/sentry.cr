@@ -4,12 +4,12 @@ module Sentry
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
   class Config
-    # `process_name` is set as a class property so that it can be inferred from
+    # `shard_name` is set as a class property so that it can be inferred from
     # the `shard.yml` in the project directory.
-    class_property! process_name : String?
+    class_property shard_name : String?
 
     YAML.mapping(
-      name: {
+      display_name: {
         type:    String?,
         getter:  false,
         default: nil,
@@ -46,7 +46,7 @@ module Sentry
 
     # Initializing an empty configuration provides no default values.
     def initialize
-      @name = nil
+      @display_name = nil
       @info = false
       @build = nil
       @build_args = ""
@@ -55,12 +55,16 @@ module Sentry
       @watch = [] of String
     end
 
-    def name
-      @name ||= self.class.process_name
+    def display_name
+      @display_name ||= self.class.shard_name
+    end
+
+    def display_name!
+      display_name.not_nil!
     end
 
     def build
-      @build ||= "crystal build ./src/#{name}.cr"
+      @build ||= "crystal build ./src/#{self.class.shard_name}.cr"
     end
 
     def build_args
@@ -68,7 +72,7 @@ module Sentry
     end
 
     def run
-      @run ||= "./#{name}"
+      @run ||= "./#{self.class.shard_name}"
     end
 
     def run_args
@@ -88,7 +92,7 @@ module Sentry
     end
 
     def merge!(other : self)
-      self.name = other.name if other.name
+      self.display_name = other.display_name if other.display_name
       self.info = other.info if other.info
       self.build = other.build if other.build
       self.build_args = other.build_args.join(" ") unless other.build_args.empty?
@@ -100,7 +104,8 @@ module Sentry
     def to_s(io : IO)
       io << <<-CONFIG
       🤖  Sentry configuration:
-            process_name: #{name}
+            display name: #{display_name}
+            shard name:   #{self.class.shard_name}
             info:         #{info}
             build:        #{build}
             build_args:   #{build_args}
@@ -113,12 +118,12 @@ module Sentry
 
   class ProcessRunner
     getter app_process : (Nil | Process) = nil
-    property process_name : String
+    property display_name : String
     property should_build = true
     property files = [] of String
 
     def initialize(
-      @process_name : String,
+      @display_name : String,
       @build_command : String,
       @run_command : String,
       @build_args : Array(String) = [] of String,
@@ -133,7 +138,7 @@ module Sentry
     end
 
     private def build_app_process
-      puts "🤖  compiling #{process_name}..."
+      puts "🤖  compiling #{display_name}..."
       build_args = @build_args
       if build_args.size > 0
         Process.run(@build_command, build_args, shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
@@ -146,12 +151,12 @@ module Sentry
       app_process = @app_process
       if app_process.is_a? Process
         unless app_process.terminated?
-          puts "🤖  killing #{process_name}..."
+          puts "🤖  killing #{display_name}..."
           app_process.kill
         end
       end
 
-      puts "🤖  starting #{process_name}..."
+      puts "🤖  starting #{display_name}..."
       run_args = @run_args
       if run_args.size > 0
         @app_process = Process.new(@run_command, run_args, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
