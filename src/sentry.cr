@@ -45,7 +45,9 @@ module Sentry
       }
     )
 
-    property sets_display_name : Bool = false
+    property? sets_display_name : Bool = false
+    property? sets_build_command : Bool = false
+    property? sets_run_command : Bool = false
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -72,12 +74,13 @@ module Sentry
       display_name.not_nil!
     end
 
-    def sets_display_name?
-      @sets_display_name
-    end
-
     def build
       @build ||= "crystal build ./src/#{self.class.shard_name}.cr"
+    end
+
+    def build=(new_command : String)
+      @sets_build_command = true
+      @build = new_command
     end
 
     def build_args
@@ -86,6 +89,11 @@ module Sentry
 
     def run
       @run ||= "./#{self.class.shard_name}"
+    end
+
+    def run=(new_command : String)
+      @sets_run_command = true
+      @run = new_command
     end
 
     def run_args
@@ -107,9 +115,9 @@ module Sentry
     def merge!(other : self)
       self.display_name = other.display_name! if other.sets_display_name?
       self.info = other.info if other.info
-      self.build = other.build if other.build
+      self.build = other.build if other.sets_build_command?
       self.build_args = other.build_args.join(" ") unless other.build_args.empty?
-      self.run = other.run if other.run
+      self.run = other.run if other.sets_run_command?
       self.run_args = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?
     end
