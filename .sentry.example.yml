@@ -32,3 +32,8 @@ run_args:
 watch:
   - ./src/**/*.cr
   - ./src/**/*.ecr
+
+# The list of patterns of files to ignore from the watched file paths.
+ignore:
+  - /\.swp$/
+  - /^\.#/

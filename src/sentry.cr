@@ -42,6 +42,10 @@ module Sentry
       watch: {
         type:    Array(String),
         default: ["./src/**/*.cr", "./src/**/*.ecr"],
+      },
+      ignore: {
+        type:    Array(String),
+        default: [] of String,
       }
     )
 
@@ -59,6 +63,7 @@ module Sentry
       @run = nil
       @run_args = ""
       @watch = [] of String
+      @ignore = [] of String
     end
 
     def display_name
@@ -120,6 +125,7 @@ module Sentry
       self.run = other.run if other.sets_run_command?
       self.run_args = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?
+      self.ignore = other.ignore unless other.ignore.empty?
     end
 
     def to_s(io : IO)
@@ -133,6 +139,7 @@ module Sentry
             run:          #{run}
             run_args:     #{run_args}
             watch:        #{watch}
+            ignore:       #{ignore}
       CONFIG
     end
   end
@@ -142,6 +149,7 @@ module Sentry
     property display_name : String
     property should_build = true
     property files = [] of String
+    property ignore_regexes = [] of Regex
 
     def initialize(
       @display_name : String,
@@ -150,9 +158,11 @@ module Sentry
       @build_args : Array(String) = [] of String,
       @run_args : Array(String) = [] of String,
       files = [] of String,
+      ignore_regexes = [] of String,
       should_build = true
     )
       @files = files
+      @ignore_regexes = ignore_regexes.map { |regex| Regex.new(regex.strip("/")) }
       @should_build = should_build
       @should_kill = false
       @app_built = false
@@ -204,13 +214,14 @@ module Sentry
       end
     end
 
-    # Scans all of the `@files`
+    # Scans all of the `@files`, expect where matched with `@ignore_regexes`
     #
     def scan_files
       file_changed = false
       app_process = @app_process
       files = @files
       Dir.glob(files) do |file|
+        next if @ignore_regexes.any? { |r| r === file || r === file.split("/").last }
         timestamp = get_timestamp(file)
         if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
           FILE_TIMESTAMPS[file] = timestamp
