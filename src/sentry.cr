@@ -149,7 +149,7 @@ module Sentry
     property display_name : String
     property should_build = true
     property files = [] of String
-    property ignore_regexes = [] of Regex
+    property ignore = [] of Regex
 
     def initialize(
       @display_name : String,
@@ -158,11 +158,11 @@ module Sentry
       @build_args : Array(String) = [] of String,
       @run_args : Array(String) = [] of String,
       files = [] of String,
-      ignore_regexes = [] of String,
+      ignore = [] of String,
       should_build = true
     )
       @files = files
-      @ignore_regexes = ignore_regexes.map { |regex| Regex.new(regex.strip("/")) }
+      @ignore = ignore.map { |regex| Regex.new(regex.strip("/")) }
       @should_build = should_build
       @should_kill = false
       @app_built = false
@@ -200,6 +200,12 @@ module Sentry
       File.stat(file).mtime.to_s("%Y%m%d%H%M%S")
     end
 
+    private def ignored?(file : String)
+      @ignore.any? do |regex|
+        regex === file || regex === file.split("/").last
+      end
+    end
+
     # Compiles and starts the application
     #
     def start_app
@@ -214,14 +220,14 @@ module Sentry
       end
     end
 
-    # Scans all of the `@files`, expect where matched with `@ignore_regexes`
+    # Scans all of the `@files`, expect where matched with `@ignore`
     #
     def scan_files
       file_changed = false
       app_process = @app_process
       files = @files
       Dir.glob(files) do |file|
-        next if @ignore_regexes.any? { |r| r === file || r === file.split("/").last }
+        next if !File.exists?(file) || ignored?(file)
         timestamp = get_timestamp(file)
         if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
           FILE_TIMESTAMPS[file] = timestamp

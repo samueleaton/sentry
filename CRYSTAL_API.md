@@ -60,6 +60,7 @@ process_runner = Sentry::ProcessRunner.new(
   build_args: [], # Array of String
   run_args: [], # Array of String
   should_build: true, # Bool
-  files: [] # Array of String
+  files: [], # Array of String
+  ignore: [] # Array of String
 )
 ```

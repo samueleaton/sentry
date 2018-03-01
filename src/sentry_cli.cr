@@ -82,7 +82,7 @@ if Sentry::Config.shard_name
     run_args: config.run_args,
     should_build: config.should_build?,
     files: config.watch,
-    ignore_regexes: config.ignore
+    ignore: config.ignore
   )
 
   process_runner.run
