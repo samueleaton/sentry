@@ -66,7 +66,7 @@ The default run command is `./[app_name]`.
 ./sentry -w "./src/**/*.cr" -w "./lib/**/*.cr"
 ```
 
-The default files being watched are `["./src/**/*.cr", "./src/**/*.ecr"]`.
+The default files being watched are `["./src/**/*.cr", "./src/**/*.ecr", "./src/**/*.slang"]`.
 
 By specifying files to watch, the default will be omitted. So if you want to watch all of the file in your `src` directory, you will need to specify that like in the above example.
 

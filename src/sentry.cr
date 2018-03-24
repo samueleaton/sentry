@@ -41,7 +41,7 @@ module Sentry
       },
       watch: {
         type:    Array(String),
-        default: ["./src/**/*.cr", "./src/**/*.ecr"],
+        default: ["./src/**/*.cr", "./src/**/*.ecr", "./src/**/*.slang"],
       }
     )
 
