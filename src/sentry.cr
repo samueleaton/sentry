@@ -174,6 +174,7 @@ module Sentry
         unless app_process.terminated?
           puts "🤖  killing #{display_name}..."
           app_process.kill
+          app_process.wait
         end
       end
 
