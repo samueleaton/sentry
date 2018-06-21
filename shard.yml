@@ -3,5 +3,5 @@ version: 0.2.0
 
 authors:
   - Sam Eaton <sam@eaton.party>
-crystal: 0.24.1
+crystal: 0.25.0
 license: ISC
