@@ -42,6 +42,10 @@ module Sentry
       watch: {
         type:    Array(String),
         default: ["./src/**/*.cr", "./src/**/*.ecr"],
+      },
+      ignore: {
+        type:    Array(String),
+        default: [] of String,
       }
     )
 
@@ -59,6 +63,7 @@ module Sentry
       @run = nil
       @run_args = ""
       @watch = [] of String
+      @ignore = [] of String
     end
 
     def display_name
@@ -120,6 +125,7 @@ module Sentry
       self.run = other.run if other.sets_run_command?
       self.run_args = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?
+      self.ignore = other.ignore unless other.ignore.empty?
     end
 
     def to_s(io : IO)
@@ -133,6 +139,7 @@ module Sentry
             run:          #{run}
             run_args:     #{run_args}
             watch:        #{watch}
+            ignore:       #{ignore}
       CONFIG
     end
   end
@@ -142,6 +149,7 @@ module Sentry
     property display_name : String
     property should_build = true
     property files = [] of String
+    property ignore = [] of Regex
 
     def initialize(
       @display_name : String,
@@ -150,9 +158,11 @@ module Sentry
       @build_args : Array(String) = [] of String,
       @run_args : Array(String) = [] of String,
       files = [] of String,
+      ignore = [] of String,
       should_build = true
     )
       @files = files
+      @ignore = ignore.map { |regex| Regex.new(regex.strip("/")) }
       @should_build = should_build
       @should_kill = false
       @app_built = false
@@ -191,6 +201,12 @@ module Sentry
       File.info(file).modification_time.epoch.to_s
     end
 
+    private def ignored?(file : String)
+      @ignore.any? do |regex|
+        regex === file || regex === file.split("/").last
+      end
+    end
+
     # Compiles and starts the application
     #
     def start_app
@@ -205,13 +221,14 @@ module Sentry
       end
     end
 
-    # Scans all of the `@files`
+    # Scans all of the `@files`, expect where matched with `@ignore`
     #
     def scan_files
       file_changed = false
       app_process = @app_process
       files = @files
       Dir.glob(files) do |file|
+        next if !File.exists?(file) || ignored?(file)
         timestamp = get_timestamp(file)
         if FILE_TIMESTAMPS[file]? && FILE_TIMESTAMPS[file] != timestamp
           FILE_TIMESTAMPS[file] = timestamp
