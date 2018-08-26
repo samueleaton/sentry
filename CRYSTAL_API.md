@@ -39,7 +39,7 @@ sentry = Sentry::ProcessRunner.new(
     process_name: "My cool app",
     build_command: "crystal build ./src/my_app.cr",
     run_command: "./my_app",
-    files: ["./src/**/*.cr", "./src/**/*.ecr"]
+    files: ["./src/**/*.cr", "./src/**/*.ecr", "./src/**/*.slang"]
 )
 
 spawn { sentry.run }
