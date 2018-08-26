@@ -48,4 +48,5 @@ if compile_success
     ./sentry --help\n\n"
 else
   puts "🤖  Bzzt. There was an error compiling sentry."
+  exit 1
 end
