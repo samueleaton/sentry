@@ -52,6 +52,11 @@ OptionParser.parse! do |parser|
     cli_config.install_shards = true
   end
   parser.on(
+    "--no-color",
+    "Removes colorization from output") do
+    cli_config.colorize = false
+  end
+  parser.on(
     "-i",
     "--info",
     "Shows the values for build/run commands, build/run args, and watched files") do
@@ -87,7 +92,8 @@ if Sentry::Config.shard_name
     run_args: config.run_args,
     should_build: config.should_build?,
     files: config.watch,
-    install_shards: config.install_shards?
+    install_shards: config.install_shards?,
+    colorize: config.colorize?
   )
 
   process_runner.run
