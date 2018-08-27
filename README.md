@@ -63,6 +63,7 @@ Usage: ./sentry [options]
      -w FILE, --watch=FILE            Overrides default files and appends to list of watched files
      -c FILE, --config=FILE           Specifies a file to load for automatic configuration (default: '.sentry.yml')
      --install                        Run 'shards install' once before running Sentry build and run commands
+     --no-color                       Removes colorization from output
      -i, --info                       Shows the values for build/run commands, build/run args, and watched files
      -h, --help                       Show this help
 ```
@@ -134,6 +135,21 @@ This is especially usefull when initiating Sentry from a `Dockerfile` or `packag
 
 ```bash
 ./sentry --install
+```
+
+#### Reading Configurations from a File
+
+Sentry will automatically read configurations from `.sentry.yml` if it exists. This can be changed with `-c FILE` or `--config=FILE`.
+
+See the `YAML.mapping` definition in the `Config` class in [the `/src/sentry.cr` file](src/sentry.cr) for valid file properties.
+
+#### Removing Colorization
+
+Sentry output is colorized by default. To remove colorization, pass the `--no-color` argument.
+
+Example
+```bash
+./sentry --no-color
 ```
 
 ## Sentry Crystal API
