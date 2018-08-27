@@ -47,6 +47,11 @@ OptionParser.parse! do |parser|
     cli_config_file_name = file
   end
   parser.on(
+    "--install",
+    "Run 'shards install' once before running Sentry build and run commands") do
+    cli_config.install_shards = true
+  end
+  parser.on(
     "-i",
     "--info",
     "Shows the values for build/run commands, build/run args, and watched files") do
@@ -81,7 +86,8 @@ if Sentry::Config.shard_name
     build_args: config.build_args,
     run_args: config.run_args,
     should_build: config.should_build?,
-    files: config.watch
+    files: config.watch,
+    install_shards: config.install_shards?
   )
 
   process_runner.run

@@ -49,6 +49,24 @@ Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr`
 ./sentry --help
 ```
 
+Example
+```bash
+$ ./sentry -h
+
+Usage: ./sentry [options]
+     -n NAME, --name=NAME             Sets the display name of the app process (default name: <your_app_here>)
+     -b COMMAND, --build=COMMAND      Overrides the default build command
+     --build-args=ARGS                Specifies arguments for the build command
+     --no-build                       Skips the build step
+     -r COMMAND, --run=COMMAND        Overrides the default run command
+     --run-args=ARGS                  Specifies arguments for the run command
+     -w FILE, --watch=FILE            Overrides default files and appends to list of watched files
+     -c FILE, --config=FILE           Specifies a file to load for automatic configuration (default: '.sentry.yml')
+     --install                        Run 'shards install' once before running Sentry build and run commands
+     -i, --info                       Shows the values for build/run commands, build/run args, and watched files
+     -h, --help                       Show this help
+```
+
 #### Override Default Build Command
 
 ```bash
@@ -87,13 +105,16 @@ Example
 ```
 $ ./sentry -i
 
-  name:       my_app
-  build:      crystal build ./src/my_app.cr
-  build args: []
-  run:        ./my_app
-  run args:   []
-  files:      ["./src/**/*.cr", "./src/**/*.ecr"]
-
+🤖  Sentry configuration:
+       display name:   my_app
+       shard name:     my_app
+       install shards: true
+       info:           true
+       build:          crystal build ./src/my_app.cr
+       build_args:     []
+       run:            ./my_app
+       run_args:       []
+       watch:          ["./src/**/*.cr", "./src/**/*.ecr"]
 🤖  Your SentryBot is vigilant. beep-boop...
 ...
 ...
@@ -105,6 +126,14 @@ If you prefer granularity, you can specify arguments to the build or run command
 
 ```bash
 ./sentry -r "crystal" --run-args "spec --debug"
+```
+
+#### Running `shards install` Before Starting
+
+This is especially usefull when initiating Sentry from a `Dockerfile` or `package.json` file. It guarantees all the shards are installed before running.
+
+```bash
+./sentry --install
 ```
 
 ## Sentry Crystal API

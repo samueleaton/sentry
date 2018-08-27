@@ -42,6 +42,10 @@ module Sentry
       watch: {
         type:    Array(String),
         default: ["./src/**/*.cr", "./src/**/*.ecr"],
+      },
+      install_shards: {
+        type:    Bool,
+        default: false,
       }
     )
 
@@ -59,6 +63,7 @@ module Sentry
       @run = nil
       @run_args = ""
       @watch = [] of String
+      @install_shards = false
     end
 
     def display_name
@@ -100,6 +105,12 @@ module Sentry
       @run_args.strip.split(" ").reject(&.empty?)
     end
 
+    setter install_shards : Bool = true
+
+    def install_shards?
+      @install_shards
+    end
+
     setter should_build : Bool = true
 
     def should_build?
@@ -120,19 +131,21 @@ module Sentry
       self.run = other.run if other.sets_run_command?
       self.run_args = other.run_args.join(" ") unless other.run_args.empty?
       self.watch = other.watch unless other.watch.empty?
+      self.install_shards = other.install_shards?
     end
 
     def to_s(io : IO)
       io << <<-CONFIG
       🤖  Sentry configuration:
-            display name: #{display_name}
-            shard name:   #{self.class.shard_name}
-            info:         #{info}
-            build:        #{build}
-            build_args:   #{build_args}
-            run:          #{run}
-            run_args:     #{run_args}
-            watch:        #{watch}
+            display name:   #{display_name}
+            shard name:     #{self.class.shard_name}
+            install shards: #{install_shards?}
+            info:           #{info}
+            build:          #{build}
+            build_args:     #{build_args}
+            run:            #{run}
+            run_args:       #{run_args}
+            watch:          #{watch}
       CONFIG
     end
   end
@@ -150,12 +163,14 @@ module Sentry
       @build_args : Array(String) = [] of String,
       @run_args : Array(String) = [] of String,
       files = [] of String,
-      should_build = true
+      should_build = true,
+      install_shards = false
     )
       @files = files
       @should_build = should_build
       @should_kill = false
       @app_built = false
+      @should_install_shards = install_shards
     end
 
     private def build_app_process
@@ -227,8 +242,19 @@ module Sentry
       start_app() if (file_changed || app_process.nil?)
     end
 
+    def run_install_shards
+      puts "🤖  Installing shards..."
+      install_result = Process.run("shards", ["install"], shell: true, output: Process::Redirect::Inherit, error: Process::Redirect::Inherit)
+      if !install_result || !install_result.success?
+        puts "🤖  Error installing shards. SentryBot shutting down..."
+        exit 1
+      end
+    end
+
     def run
       puts "🤖  Your SentryBot is vigilant. beep-boop..."
+
+      run_install_shards if @should_install_shards
 
       loop do
         if @should_kill
