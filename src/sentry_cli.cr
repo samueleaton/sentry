@@ -1,4 +1,5 @@
 require "option_parser"
+require "colorize"
 require "./sentry"
 
 begin
@@ -80,7 +81,11 @@ config = Sentry::Config.from_yaml(config_yaml)
 config.merge!(cli_config)
 
 if config.info
-  puts config
+  if config.colorize?
+    puts config.to_s.colorize.fore(:yellow)
+  else
+    puts config
+  end
 end
 
 if Sentry::Config.shard_name
