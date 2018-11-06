@@ -227,7 +227,7 @@ module Sentry
     end
 
     private def get_timestamp(file : String)
-      File.info(file).modification_time.epoch.to_s
+      File.info(file).modification_time.to_unix.to_s
     end
 
     # Compiles and starts the application
