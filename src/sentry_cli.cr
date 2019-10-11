@@ -12,7 +12,7 @@ end
 cli_config = Sentry::Config.new
 cli_config_file_name = ".sentry.yml"
 
-OptionParser.parse! do |parser|
+OptionParser.parse do |parser|
   parser.banner = "Usage: ./sentry [options]"
   parser.on(
     "-n NAME",
