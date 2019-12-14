@@ -3,5 +3,11 @@ version: 0.3.1
 
 authors:
   - Sam Eaton <sam@eaton.party>
-crystal: 0.27.0
+
+targets:
+  sentry:
+    main: src/sentry_cli.cr
+
+crystal: 0.32.0
+
 license: ISC
