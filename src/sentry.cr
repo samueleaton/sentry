@@ -263,11 +263,11 @@ module Sentry
             file_changed = true if (app_process && !app_process.terminated?)
           end
         end
-      rescue ex : Errno
+      rescue ex
         # The underlining lib for reading directories will fail very rarely, crashing Sentry
         # This catches that error and allows Sentry to carry on normally
         # https://github.com/crystal-lang/crystal/blob/59788834554399f7fe838487a83eb466e55c6408/src/errno.cr#L37
-        unless ex.to_s == "readdir: Input/output error"
+        unless ex.message == "readdir: Input/output error"
           raise ex
         end
       end
