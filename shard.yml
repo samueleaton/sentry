@@ -1,7 +1,7 @@
 name: sentry
-version: 0.3.1
+version: 0.3.2
 
 authors:
   - Sam Eaton <sam@eaton.party>
-crystal: 0.27.0
+crystal: 0.34.0
 license: ISC
