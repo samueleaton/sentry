@@ -185,7 +185,7 @@ module Sentry
       if app_process.is_a? Process
         unless app_process.terminated?
           stdout "🤖  killing #{display_name}..."
-          app_process.kill
+          app_process.signal(:kill)
           app_process.wait
         end
       end
