@@ -5,58 +5,36 @@ module Sentry
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
 
   class Config
+    include YAML::Serializable
+
     # `shard_name` is set as a class property so that it can be inferred from
     # the `shard.yml` in the project directory.
     class_property shard_name : String?
 
-    YAML.mapping(
-      display_name: {
-        type:    String?,
-        getter:  false,
-        setter:  false,
-        default: nil,
-      },
-      info: {
-        type:    Bool,
-        default: false,
-      },
-      build: {
-        type:    String?,
-        getter:  false,
-        default: nil,
-      },
-      build_args: {
-        type:    String,
-        getter:  false,
-        default: "",
-      },
-      run: {
-        type:    String?,
-        getter:  false,
-        default: nil,
-      },
-      run_args: {
-        type:    String,
-        getter:  false,
-        default: "",
-      },
-      watch: {
-        type:    Array(String),
-        default: ["./src/**/*.cr", "./src/**/*.ecr"],
-      },
-      install_shards: {
-        type:    Bool,
-        default: false,
-      },
-      colorize: {
-        type:    Bool,
-        default: true,
-      }
-    )
-
+    @[YAML::Field(ignore: true)]
     property? sets_display_name : Bool = false
+
+    @[YAML::Field(ignore: true)]
     property? sets_build_command : Bool = false
+
+    @[YAML::Field(ignore: true)]
     property? sets_run_command : Bool = false
+
+    property info : Bool = false
+
+    property? colorize : Bool = true
+
+    property? install_shards : Bool = false
+
+    property? colorize : Bool = false
+
+    setter build_args : String = ""
+
+    setter run_args : String = ""
+
+    property watch : Array(String) = ["./src/**/*.cr", "./src/**/*.ecr"]
+
+    property install_shards : Bool = false
 
     # Initializing an empty configuration provides no default values.
     def initialize
@@ -72,6 +50,8 @@ module Sentry
       @colorize = true
     end
 
+    @display_name : String?
+
     def display_name
       @display_name ||= self.class.shard_name
     end
@@ -84,6 +64,8 @@ module Sentry
     def display_name!
       display_name.not_nil!
     end
+
+    @build : String?
 
     def build
       @build ||= "crystal build ./src/#{self.class.shard_name}.cr"
@@ -98,6 +80,8 @@ module Sentry
       @build_args.strip.split(" ").reject(&.empty?)
     end
 
+    @run : String?
+
     def run
       @run ||= "./#{self.class.shard_name}"
     end
@@ -111,18 +95,7 @@ module Sentry
       @run_args.strip.split(" ").reject(&.empty?)
     end
 
-    setter install_shards : Bool = false
-
-    def install_shards?
-      @install_shards
-    end
-
-    setter colorize : Bool = false
-
-    def colorize?
-      @colorize
-    end
-
+    @[YAML::Field(ignore: true)]
     setter should_build : Bool = true
 
     def should_build?
@@ -212,7 +185,7 @@ module Sentry
       if app_process.is_a? Process
         unless app_process.terminated?
           stdout "🤖  killing #{display_name}..."
-          app_process.kill
+          app_process.signal(:kill)
           app_process.wait
         end
       end
