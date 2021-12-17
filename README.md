@@ -11,16 +11,19 @@ Build/Runs your crystal application, watches files, and rebuilds/reruns app on f
 ## Installation
 
 To install in your project, from the root directory of your project, run:
+
 ```bash
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/master/install.cr | crystal eval
 ```
 
 If using Crystal version `0.24.2` try the following:
+
 ```bash
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/crystal-v0.24.2/install.cr | crystal eval
 ```
 
 If using Crystal version `0.23.1` or lower try the following:
+
 ```bash
 curl -fsSLo- https://raw.githubusercontent.com/samueleaton/sentry/crystal-v0.23.1/install.cr | crystal eval
 ```
@@ -50,12 +53,14 @@ Assuming `sentry.cr` was correctly placed in `[your project name]/dev/sentry.cr`
 ```
 
 Example
+
 ```bash
 $ ./sentry -h
 
 Usage: ./sentry [options]
      -n NAME, --name=NAME             Sets the display name of the app process (default name: <your_app_here>)
-     -b COMMAND, --build=COMMAND      Overrides the default build command
+     --src=PATH                       Sets the entry path for the main crystal file (default is inferred from shards.yaml)
+     -b COMMAND, --build=COMMAND      Overrides the default build command (will override --src flag)
      --build-args=ARGS                Specifies arguments for the build command
      --no-build                       Skips the build step
      -r COMMAND, --run=COMMAND        Overrides the default run command
@@ -103,6 +108,7 @@ This shows the values for the build command, run command, and watched files.
 ```
 
 Example
+
 ```
 $ ./sentry -i
 
@@ -148,6 +154,7 @@ See the `YAML.mapping` definition in the `Config` class in [the `/src/sentry.cr`
 Sentry output is colorized by default. To remove colorization, pass the `--no-color` argument.
 
 Example
+
 ```bash
 ./sentry --no-color
 ```
@@ -157,6 +164,7 @@ Example
 See [CRYSTAL_API.md](./CRYSTAL_API.md)
 
 ## Why?
+
 (1) It is tiring to have to stop and restart an app on every change.
 
 (2) Docker!

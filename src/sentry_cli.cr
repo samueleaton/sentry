@@ -12,12 +12,28 @@ end
 cli_config = Sentry::Config.new
 cli_config_file_name = ".sentry.yml"
 
+# Set the default entry src path from shard.yml
+if shard_yml && (targets = shard_yml["targets"]?)
+  if targets
+    if name && (main_path = targets.dig?(name, "main"))
+      cli_config.src_path = main_path.as_s
+    elsif ((raw = targets.raw) && raw.is_a?(Hash))
+      if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
+        cli_config.src_path = main_path.as_s
+      end
+    end
+  end
+end
+
 OptionParser.parse do |parser|
   parser.banner = "Usage: ./sentry [options]"
   parser.on(
     "-n NAME",
     "--name=NAME",
     "Sets the display name of the app process (default name: #{Sentry::Config.shard_name})") { |name| cli_config.display_name = name }
+  parser.on(
+    "--src=PATH",
+    "Sets the entry path for the main crystal file (default inferred from shard.yaml)") { |path| cli_config.src_path = path }
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
@@ -87,6 +103,8 @@ if config.info
     puts config
   end
 end
+
+puts "config: #{config}"
 
 if Sentry::Config.shard_name
   process_runner = Sentry::ProcessRunner.new(
