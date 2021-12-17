@@ -37,7 +37,7 @@ OptionParser.parse do |parser|
   parser.on(
     "-b COMMAND",
     "--build=COMMAND",
-    "Overrides the default build command") { |command| cli_config.build = command }
+    "Overrides the default build command (will override --src flag)") { |command| cli_config.build = command }
   parser.on(
     "--build-args=ARGS",
     "Specifies arguments for the build command") { |args| cli_config.build_args = args }
