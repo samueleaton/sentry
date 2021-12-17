@@ -24,9 +24,9 @@ module Sentry
 
     property? colorize : Bool = true
 
-    property? install_shards : Bool = false
+    property src_path : String = "./src/#{Sentry::Config.shard_name}.cr"
 
-    property? colorize : Bool = false
+    property? install_shards : Bool = false
 
     setter build_args : String = ""
 
@@ -41,6 +41,7 @@ module Sentry
       @display_name = nil
       @sets_display_name = false
       @info = false
+      @src_path = "./src/#{Sentry::Config.shard_name}.cr"
       @build = nil
       @build_args = ""
       @run = nil
@@ -68,7 +69,7 @@ module Sentry
     @build : String?
 
     def build
-      @build ||= "crystal build ./src/#{self.class.shard_name}.cr"
+      @build ||= "crystal build #{self.src_path}"
     end
 
     def build=(new_command : String)
@@ -118,6 +119,7 @@ module Sentry
       self.watch = other.watch unless other.watch.empty?
       self.install_shards = other.install_shards?
       self.colorize = other.colorize?
+      self.src_path = other.src_path
     end
 
     def to_s(io : IO)
@@ -129,6 +131,7 @@ module Sentry
             info:           #{info}
             build:          #{build}
             build_args:     #{build_args}
+            src_path:       #{src_path}
             run:            #{run}
             run_args:       #{run_args}
             watch:          #{watch}

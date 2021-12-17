@@ -12,6 +12,21 @@ end
 cli_config = Sentry::Config.new
 cli_config_file_name = ".sentry.yml"
 
+# Set the default entry src path from shard.yml
+if shard_yml && (targets = shard_yml["targets"]?)
+  if targets
+    # use targets[<shard_name>]["main"] if exists
+    if name && (main_path = targets.dig?(name, "main"))
+      cli_config.src_path = main_path.as_s
+    elsif ((raw = targets.raw) && raw.is_a?(Hash))
+      # otherwise, use the first key you find targets[<first_key>]["main"]
+      if (first_key = raw.keys[0]?) && (main_path = targets.dig?(first_key, "main"))
+        cli_config.src_path = main_path.as_s
+      end
+    end
+  end
+end
+
 OptionParser.parse do |parser|
   parser.banner = "Usage: ./sentry [options]"
   parser.on(
@@ -19,9 +34,12 @@ OptionParser.parse do |parser|
     "--name=NAME",
     "Sets the display name of the app process (default name: #{Sentry::Config.shard_name})") { |name| cli_config.display_name = name }
   parser.on(
+    "--src=PATH",
+    "Sets the entry path for the main crystal file (default inferred from shard.yaml)") { |path| cli_config.src_path = path }
+  parser.on(
     "-b COMMAND",
     "--build=COMMAND",
-    "Overrides the default build command") { |command| cli_config.build = command }
+    "Overrides the default build command (will override --src flag)") { |command| cli_config.build = command }
   parser.on(
     "--build-args=ARGS",
     "Specifies arguments for the build command") { |args| cli_config.build_args = args }
