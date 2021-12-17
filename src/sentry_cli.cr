@@ -104,8 +104,6 @@ if config.info
   end
 end
 
-puts "config: #{config}"
-
 if Sentry::Config.shard_name
   process_runner = Sentry::ProcessRunner.new(
     display_name: config.display_name!,
