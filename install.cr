@@ -30,15 +30,17 @@ sentry_cli_code = fetch_cli_response.body
 
 puts " success"
 
-# Write files to dev directory
-FileUtils.mkdir_p "./dev"
-File.write "./dev/sentry.cr", sentry_code
-File.write "./dev/sentry_cli.cr", sentry_cli_code
+# Write files to temp directory
+build_dir = "#{Dir.tempdir}/sentry-build-#{Time.utc.to_unix}"
+FileUtils.mkdir_p build_dir
+File.write "#{build_dir}/sentry.cr", sentry_code
+File.write "#{build_dir}/sentry_cli.cr", sentry_cli_code
 
 # compile sentry files
 puts "🤖  Compiling sentry using --release flag..."
-build_args = ["build", "--release", "./dev/sentry_cli.cr", "-o", "./sentry"]
+build_args = ["build", "--release", "#{build_dir}/sentry_cli.cr", "-o", "./sentry"]
 compile_success = system "crystal", build_args
+FileUtils.rm_r build_dir
 
 if compile_success
   puts "🤖  Sentry installed!"

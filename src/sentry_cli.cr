@@ -2,6 +2,9 @@ require "option_parser"
 require "colorize"
 require "./sentry"
 
+# prevent output buffering
+STDOUT.sync = true
+
 begin
   shard_yml = YAML.parse File.read("shard.yml")
   name = shard_yml["name"]?
