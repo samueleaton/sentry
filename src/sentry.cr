@@ -145,6 +145,9 @@ module Sentry
     property display_name : String
     property should_build = true
     property files = [] of String
+    @sound_player : String = ""
+    @success_wav = "#{__DIR__}/sounds/drip.wav"
+    @error_wav = "#{__DIR__}/sounds/error.wav"
 
     def initialize(
       @display_name : String,
@@ -163,6 +166,14 @@ module Sentry
       @app_built = false
       @should_install_shards = install_shards
       @colorize = colorize
+
+      if File.exists?(@success_wav) && File.exists?(@error_wav)
+        {% if flag?(:linux) %}
+          @sound_player = `which aplay 2>/dev/null`.chomp
+        {% elsif flag(:darwin) %}
+          @sound_player = `which afplay 2>/dev/null`.chomp
+        {% end %}
+      end
     end
 
     private def stdout(str : String)
@@ -214,9 +225,13 @@ module Sentry
       if build_result && build_result.success?
         @app_built = true
         create_app_process()
+        `#{@sound_player} #{@success_wav} 2>/dev/null` unless @sound_player.blank?
       elsif !@app_built # if build fails on first time compiling, then exit
         stdout "🤖  Compile time errors detected. SentryBot shutting down..."
+        `#{@sound_player} #{@error_wav} 2>/dev/null` unless @sound_player.blank?
         exit 1
+      else
+        `#{@sound_player} #{@error_wav} 2>/dev/null` unless @sound_player.blank?
       end
     end
 
