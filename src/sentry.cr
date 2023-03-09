@@ -146,7 +146,7 @@ module Sentry
     property should_build = true
     property files = [] of String
     @sound_player : String = ""
-    @success_wav = "#{__DIR__}/sounds/drip.wav"
+    @success_wav = "#{__DIR__}/sounds/success.wav"
     @error_wav = "#{__DIR__}/sounds/error.wav"
 
     def initialize(
