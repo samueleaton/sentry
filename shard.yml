@@ -1,6 +1,13 @@
 name: sentry
 version: 0.3.2
 
+scripts:
+  postinstall: make install
+
+targets:
+  sentry:
+    main: src/sentry_cli.cr
+
 authors:
   - Sam Eaton <sam@eaton.party>
 crystal: ">= 0.34.0"
