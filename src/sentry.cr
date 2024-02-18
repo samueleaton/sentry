@@ -1,5 +1,6 @@
 require "yaml"
 require "colorize"
+require "./sound_file_storage"
 
 module Sentry
   FILE_TIMESTAMPS = {} of String => String # {file => timestamp}
@@ -146,8 +147,8 @@ module Sentry
     property should_build = true
     property files = [] of String
     @sound_player : String = ""
-    @success_wav = "#{__DIR__}/sounds/success.wav"
-    @error_wav = "#{__DIR__}/sounds/error.wav"
+    @success_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("success.wav")
+    @error_wav : BakedFileSystem::BakedFile = SoundFileStorage.get("error.wav")
 
     def initialize(
       @display_name : String,
@@ -167,13 +168,11 @@ module Sentry
       @should_install_shards = install_shards
       @colorize = colorize
 
-      if File.exists?(@success_wav) && File.exists?(@error_wav)
-        {% if flag?(:linux) %}
-          @sound_player = `which aplay 2>/dev/null`.chomp
-        {% elsif flag(:darwin) %}
-          @sound_player = `which afplay 2>/dev/null`.chomp
-        {% end %}
-      end
+      {% if flag?(:linux) %}
+        @sound_player = `which aplay 2>/dev/null`.chomp
+      {% elsif flag(:darwin) %}
+        @sound_player = `which afplay 2>/dev/null`.chomp
+      {% end %}
     end
 
     private def stdout(str : String)
@@ -225,13 +224,22 @@ module Sentry
       if build_result && build_result.success?
         @app_built = true
         create_app_process()
-        `#{@sound_player} #{@success_wav} 2>/dev/null` unless @sound_player.blank?
+        unless @sound_player.blank?
+          Process.new(command: @sound_player, input: @success_wav)
+          @success_wav.rewind
+        end
       elsif !@app_built # if build fails on first time compiling, then exit
         stdout "🤖  Compile time errors detected. SentryBot shutting down..."
-        `#{@sound_player} #{@error_wav} 2>/dev/null` unless @sound_player.blank?
+        unless @sound_player.blank?
+          Process.new(command: @sound_player, input: @error_wav)
+          @error_wav.rewind
+        end
         exit 1
       else
-        `#{@sound_player} #{@error_wav} 2>/dev/null` unless @sound_player.blank?
+        unless @sound_player.blank?
+          Process.new(command: @sound_player, input: @error_wav)
+          @error_wav.rewind
+        end
       end
     end
 
