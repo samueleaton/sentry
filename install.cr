@@ -4,36 +4,27 @@ require "file_utils"
 
 print "🤖  Fetching sentry files..."
 
-# Fetch sentry.cr
-sentry_uri = "https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry.cr"
-fetch_sentry_response = HTTP::Client.get sentry_uri
+def check_code(url : String)
+  response = HTTP::Client.get url
 
-if fetch_sentry_response.status_code > 299
-  puts "HTTP request error. Could not fetch #{sentry_uri}"
-  puts fetch_sentry_response.body
-  exit 1
+  if response.status_code > 299
+    puts "HTTP request error. Could not fetch #{url}"
+    puts response.body
+    exit 1
+  end
+
+  response
 end
 
-sentry_code = fetch_sentry_response.body
-
-# Fetch sentry_cli.cr
-sentry_cli_uri = "https://raw.githubusercontent.com/samueleaton/sentry/master/src/sentry_cli.cr"
-fetch_cli_response = HTTP::Client.get sentry_cli_uri
-
-if fetch_cli_response.status_code > 299
-  puts "HTTP request error. Could not fetch #{sentry_cli_uri}"
-  puts fetch_cli_response.body
-  exit 1
-end
-
-sentry_cli_code = fetch_cli_response.body
+sentry_source_code = check_code("https://raw.githubusercontent.com/zw963/sentry/master/src/sentry.cr").body
+sentry_cli_source_code = check_code("https://raw.githubusercontent.com/zw963/sentry/master/src/sentry_cli.cr").body
 
 puts " success"
 
 # Write files to dev directory
 FileUtils.mkdir_p "./dev"
-File.write "./dev/sentry.cr", sentry_code
-File.write "./dev/sentry_cli.cr", sentry_cli_code
+File.write "./dev/sentry.cr", sentry_source_code
+File.write "./dev/sentry_cli.cr", sentry_cli_source_code
 
 # compile sentry files
 puts "🤖  Compiling sentry using --release flag..."

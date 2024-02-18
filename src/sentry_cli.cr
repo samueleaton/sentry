@@ -27,6 +27,8 @@ if shard_yml && (targets = shard_yml["targets"]?)
   end
 end
 
+cli_config.run = "./#{cli_config.src_path[/\/(.*)\.cr/, 1]}"
+
 OptionParser.parse do |parser|
   parser.banner = "Usage: ./sentry [options]"
   parser.on(
